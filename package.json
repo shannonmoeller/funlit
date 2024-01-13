@@ -1,0 +1,12 @@
+{
+  "name": "funlit",
+  "version": "0.0.0",
+  "description": "Functional Lit elements.",
+  "author": "Shannon Moeller <me@shannonmoeller.com>",
+  "license": "MIT",
+  "type": "module",
+  "main": "funlit.js",
+  "dependencies": {
+    "lit-html": "^3.1.1"
+  }
+}
