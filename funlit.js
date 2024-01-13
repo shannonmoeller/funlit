@@ -81,6 +81,12 @@ export function attr(host, name, value, options = {}) {
     stringify = String,
   } = options;
 
+  if (name in host) {
+    value = host[name];
+  } else if (host.hasAttribute(attr)) {
+    value = boolean ? true : parse(host.getAttribute(attr));
+  }
+
   Object.defineProperty(host, name, {
     get() {
       return value;
@@ -92,19 +98,13 @@ export function attr(host, name, value, options = {}) {
     },
   });
 
-  function readAttribute() {
+  new MutationObserver(() => {
     host[name] = boolean
       ? host.hasAttribute(attr)
       : parse(host.getAttribute(attr));
-  }
-
-  new MutationObserver(readAttribute).observe(host, {
+  }).observe(host, {
     attributeFilter: [attr],
   });
-
-  if (boolean || host.hasAttribute(attr)) {
-    readAttribute();
-  }
 
   return {
     get value() {
@@ -120,6 +120,10 @@ export function attr(host, name, value, options = {}) {
 }
 
 export function prop(host, name, value) {
+  if (name in host) {
+    value = host[name];
+  }
+
   Object.defineProperty(host, name, {
     get() {
       return value;
