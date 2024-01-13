@@ -1,7 +1,7 @@
-import { define, attr, html } from "funlit";
+import { define, attribute, html } from "funlit";
 
 define("fun-stepper", (host) => {
-  const count = attr(host, "count", 20, {
+  const count = attribute(host, "count", 20, {
     parse: Number,
   });
 

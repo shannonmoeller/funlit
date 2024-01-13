@@ -73,9 +73,9 @@ export function define(name, init) {
   return FunlitComponent;
 }
 
-export function attr(host, name, value, options = {}) {
+export function attribute(host, name, value, options = {}) {
   let {
-    attr = hyphenCase(name),
+    attribute = hyphenCase(name),
     boolean = false,
     parse = String,
     stringify = String,
@@ -83,8 +83,8 @@ export function attr(host, name, value, options = {}) {
 
   if (name in host) {
     value = host[name];
-  } else if (host.hasAttribute(attr)) {
-    value = boolean ? true : parse(host.getAttribute(attr));
+  } else if (host.hasAttribute(attribute)) {
+    value = boolean ? true : parse(host.getAttribute(attribute));
   }
 
   Object.defineProperty(host, name, {
@@ -100,10 +100,10 @@ export function attr(host, name, value, options = {}) {
 
   new MutationObserver(() => {
     host[name] = boolean
-      ? host.hasAttribute(attr)
-      : parse(host.getAttribute(attr));
+      ? host.hasAttribute(attribute)
+      : parse(host.getAttribute(attribute));
   }).observe(host, {
-    attributeFilter: [attr],
+    attributeFilter: [attribute],
   });
 
   return {
@@ -119,7 +119,7 @@ export function attr(host, name, value, options = {}) {
   };
 }
 
-export function prop(host, name, value) {
+export function property(host, name, value) {
   if (name in host) {
     value = host[name];
   }

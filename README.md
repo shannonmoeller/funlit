@@ -1,12 +1,12 @@
 # Funlit
 
-Functional Lit elements.
+Functional Lit elements. Light DOM by default.
 
 ```js
-import { define, attr, html } from 'funlit';
+import { define, attribute, html } from 'funlit';
 
 define('fun-stepper', (host) => {
-  const count = attr(host, 'count', 0, {
+  const count = attribute(host, 'count', 0, {
     parse: Number,
   });
 
