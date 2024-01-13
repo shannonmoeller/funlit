@@ -4,6 +4,12 @@
 
 <title>funlit</title>
 
+<style>
+  fun-stepper {
+    display: block;
+  }
+</style>
+
 <script type="importmap">
   {
     "imports": {
@@ -13,6 +19,11 @@
   }
 </script>
 <script type="module" src="./test.js"></script>
+<script type="module">
+  const stepper = document.createElement("fun-stepper");
+  stepper.count = 30;
+  document.body.append(stepper);
+</script>
 
 <fun-stepper count="0"></fun-stepper>
 <fun-stepper count="10"></fun-stepper>
