@@ -6,7 +6,9 @@ Functional Lit elements.
 import { define, attr, html } from 'funlit';
 
 define('fun-stepper', (host) => {
-  const count = attr(host, 'count', 0);
+  const count = attr(host, 'count', 0, {
+    parse: Number,
+  });
 
   function decrement() {
     count.value--;
