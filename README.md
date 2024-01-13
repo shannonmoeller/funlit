@@ -33,5 +33,5 @@ define('fun-stepper', (host) => {
   let stepper = document.createElement('fun-stepper');
   stepper.count = 20;
   document.body.append(stepper);
-</scrip>
+</script>
 ```
