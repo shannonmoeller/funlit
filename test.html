@@ -8,6 +8,10 @@
   fun-stepper {
     display: block;
   }
+
+  fun-timer {
+    display: block;
+  }
 </style>
 
 <script type="importmap">
@@ -18,13 +22,23 @@
     }
   }
 </script>
-<script type="module" src="./test.js"></script>
+
+<script type="module" src="./fun-stepper.js"></script>
+<script type="module" src="./fun-timer.js"></script>
 <script type="module">
   const stepper = document.createElement("fun-stepper");
   stepper.count = 30;
   document.body.append(stepper);
+
+  const timer = document.createElement("fun-timer");
+  timer.duration = 60;
+  document.body.append(timer);
 </script>
 
 <fun-stepper count="0"></fun-stepper>
 <fun-stepper count="10"></fun-stepper>
 <fun-stepper></fun-stepper>
+
+<fun-timer duration="2"></fun-timer>
+<fun-timer duration="10"></fun-timer>
+<fun-timer></fun-timer>
