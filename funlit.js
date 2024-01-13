@@ -98,10 +98,7 @@ export function attr(host, name, value, options = {}) {
       : parse(host.getAttribute(attr));
   }
 
-  new MutationObserver(() => {
-    readAttribute();
-    host.update();
-  }).observe(host, {
+  new MutationObserver(readAttribute).observe(host, {
     attributeFilter: [attr],
   });
 
