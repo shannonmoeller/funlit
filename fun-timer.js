@@ -33,10 +33,10 @@ define("fun-timer", (host) => {
   host.addEventListener("disconnect", pause);
 
   return () => html`
+    ${remaining.value.toFixed(2)}
     <button @click=${prev.value ? pause : play}>
       ${prev.value ? "pause" : "play"}
     </button>
     <button @click=${reset}>reset</button>
-    ${remaining.value.toFixed(2)}
   `;
 });

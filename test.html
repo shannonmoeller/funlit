@@ -5,12 +5,50 @@
 <title>funlit</title>
 
 <style>
-  fun-stepper {
-    display: block;
+  * {
+    box-sizing: border-box;
+    margin: unset;
+    padding: unset;
+    color: inherit;
+    font: inherit;
   }
 
+  html,
+  body {
+    height: 100svh;
+  }
+
+  html {
+    accent-color: orange;
+    color-scheme: dark light;
+    background-color: canvas;
+    color: canvastext;
+    font: normal clamp(1rem, 5vmin, 10rem) / 1.5 system-ui;
+  }
+
+  body {
+    display: grid;
+    place-content: safe center;
+  }
+
+  main {
+    display: grid;
+    gap: 1rem;
+    padding: 2rem;
+  }
+
+  button {
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  fun-stepper,
   fun-timer {
-    display: block;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 6ch repeat(auto-fit, minmax(0, 1fr));
+    gap: 0.5ch;
+    min-inline-size: 15rem;
   }
 </style>
 
@@ -26,19 +64,23 @@
 <script type="module" src="./fun-stepper.js"></script>
 <script type="module" src="./fun-timer.js"></script>
 <script type="module">
+  const main = document.querySelector("main");
+
   const stepper = document.createElement("fun-stepper");
   stepper.count = 30;
-  document.body.append(stepper);
+  main.append(stepper);
 
   const timer = document.createElement("fun-timer");
   timer.duration = 60;
-  document.body.append(timer);
+  main.append(timer);
 </script>
 
-<fun-stepper count="0"></fun-stepper>
-<fun-stepper count="10"></fun-stepper>
-<fun-stepper></fun-stepper>
+<main>
+  <fun-stepper count="0"></fun-stepper>
+  <fun-stepper count="10"></fun-stepper>
+  <fun-stepper></fun-stepper>
 
-<fun-timer duration="2"></fun-timer>
-<fun-timer duration="10"></fun-timer>
-<fun-timer></fun-timer>
+  <fun-timer duration="2"></fun-timer>
+  <fun-timer duration="10"></fun-timer>
+  <fun-timer></fun-timer>
+</main>

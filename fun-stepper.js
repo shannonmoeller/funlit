@@ -35,8 +35,8 @@ define("fun-stepper", (host) => {
   });
 
   return () => html`
-    <button @click=${decrement}>-</button>
     ${count}
+    <button @click=${decrement}>-</button>
     <button @click=${increment}>+</button>
     <button @click=${reset}>x</button>
   `;
