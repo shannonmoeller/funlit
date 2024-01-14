@@ -30,7 +30,7 @@ define('fun-stepper', (host) => {
 <fun-stepper></fun-stepper>
 <fun-stepper count="10"></fun-stepper>
 <script>
-  let stepper = document.createElement('fun-stepper');
+  const stepper = document.createElement('fun-stepper');
   stepper.count = 20;
   document.body.append(stepper);
 </script>

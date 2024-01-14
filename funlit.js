@@ -74,7 +74,7 @@ export function define(name, init) {
 }
 
 export function attribute(host, name, value, options = {}) {
-  let {
+  const {
     attribute = hyphenCase(name),
     boolean = false,
     parse = String,
