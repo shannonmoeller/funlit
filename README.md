@@ -1,6 +1,6 @@
-# Funlit
+# funlit
 
-Functional Lit elements. Light DOM by default.
+Function Lit elements. Light DOM by default.
 
 ```js
 import { define, attribute, html } from 'funlit';
