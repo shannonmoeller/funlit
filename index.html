@@ -61,18 +61,18 @@
     text-decoration: underline;
   }
 
+  button {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
   header ~ * {
     display: grid;
     align-items: center;
     grid-template-columns: 6ch repeat(auto-fit, minmax(0, 1fr));
     gap: 0.5ch;
     min-inline-size: 15rem;
-  }
-
-  button {
-    touch-action: manipulation;
-    -webkit-user-select: none;
-    user-select: none;
   }
 </style>
 
