@@ -37,7 +37,31 @@
     padding: 2rem;
   }
 
-  main > * {
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+
+  a {
+    color: orange;
+    text-decoration: none;
+  }
+
+  a:is(:hover, :focus-visible) {
+    text-decoration: underline;
+  }
+
+  header ~ * {
     display: grid;
     align-items: center;
     grid-template-columns: 6ch repeat(auto-fit, minmax(0, 1fr));
@@ -76,6 +100,15 @@
 </script>
 
 <main>
+  <header>
+    <h1>Funlit</h1>
+
+    <nav>
+      <a href="https://github.com/shannonmoeller/funlit">Github</a>
+      <a href="https://npm.im/funlit">npm</a>
+    </nav>
+  </header>
+
   <fun-stepper count="0"></fun-stepper>
   <fun-stepper count="10"></fun-stepper>
   <fun-stepper></fun-stepper>
