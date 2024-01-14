@@ -85,9 +85,10 @@
   }
 </script>
 
-<script type="module" src="./examples/fun-stepper.js"></script>
-<script type="module" src="./examples/fun-timer.js"></script>
 <script type="module">
+  import "./examples/fun-stepper.js";
+  import "./examples/fun-timer.js";
+
   const main = document.querySelector("main");
 
   const stepper = document.createElement("fun-stepper");
