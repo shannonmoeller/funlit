@@ -1,9 +1,9 @@
-import { define, attribute, state, html } from "funlit";
+import { define, attr, val, html } from "funlit";
 
 define("fun-timer", (host) => {
-  const duration = attribute(host, "duration", 20, { parse: Number });
-  const remaining = state(host, 0);
-  const prev = state(host, null);
+  const duration = attr(host, "duration", 20, { parse: Number });
+  const time = val(host, 0);
+  const prev = val(host, null);
 
   function play() {
     prev.value = performance.now();
@@ -15,25 +15,25 @@ define("fun-timer", (host) => {
   }
 
   function reset() {
-    remaining.value = duration.value;
+    time.value = duration.value;
   }
 
   function tick(next) {
-    if (prev.value) {
-      const delta = (next - prev.value) / 1000;
+    if (!prev.value) return;
 
-      remaining.value = Math.max(0, remaining.value - delta);
-      prev.value = remaining.value ? next : null;
+    const delta = (next - prev.value) / 1000;
 
-      requestAnimationFrame(tick);
-    }
+    time.value = Math.max(0, time.value - delta);
+    prev.value = time.value ? next : null;
+
+    requestAnimationFrame(tick);
   }
 
   host.addEventListener("connect", reset);
   host.addEventListener("disconnect", pause);
 
   return () => html`
-    ${remaining.value.toFixed(2)}
+    ${time.value.toFixed(2)}
     <button @click=${prev.value ? pause : play}>
       ${prev.value ? "pause" : "play"}
     </button>

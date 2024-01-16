@@ -3,10 +3,10 @@
 Function Lit elements. Light DOM by default.
 
 ```js
-import { define, attribute, html } from 'funlit';
+import { define, attr, html } from 'funlit';
 
 define('fun-stepper', (host) => {
-  const count = attribute(host, 'count', 0, {
+  const count = attr(host, 'count', 0, {
     parse: Number,
   });
 

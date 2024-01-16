@@ -1,14 +1,12 @@
 import { html, render } from "lit-html";
 
-export { html };
-
-function hyphenCase(string) {
-  return string.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`);
-}
-
-function pascalCase(string) {
-  return string.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase());
-}
+export {
+  defineElement as define,
+  defineAttribute as attr,
+  defineProperty as prop,
+  defineValue as val,
+  html,
+};
 
 export class FunlitElement extends HTMLElement {
   #init = null;
@@ -57,7 +55,7 @@ export class FunlitElement extends HTMLElement {
   };
 }
 
-export function define(name, init) {
+export function defineElement(name, init) {
   class FunlitComponent extends FunlitElement {
     constructor() {
       super(init);
@@ -65,7 +63,7 @@ export function define(name, init) {
   }
 
   Object.defineProperty(FunlitComponent, "name", {
-    value: `${pascalCase(name)}Element`,
+    value: `${pascalify(name)}Element`,
   });
 
   customElements.define(name, FunlitComponent);
@@ -73,9 +71,9 @@ export function define(name, init) {
   return FunlitComponent;
 }
 
-export function attribute(host, name, value, options = {}) {
+export function defineAttribute(host, name, value, options = {}) {
   const {
-    attribute = hyphenCase(name),
+    attribute = hyphenify(name),
     boolean = false,
     parse = String,
     stringify = String,
@@ -87,14 +85,16 @@ export function attribute(host, name, value, options = {}) {
     value = boolean ? true : parse(host.getAttribute(attribute));
   }
 
+  const state = defineValue(host, value, { stringify });
+
   Object.defineProperty(host, name, {
+    configurable: false,
+    enumerable: true,
     get() {
-      return value;
+      return state.value;
     },
     set(next) {
-      if (next === value) return;
-      value = next;
-      host.update();
+      state.value = next;
     },
   });
 
@@ -106,60 +106,54 @@ export function attribute(host, name, value, options = {}) {
     attributeFilter: [attribute],
   });
 
-  return {
-    get value() {
-      return host[name];
-    },
-    set value(next) {
-      host[name] = next;
-    },
-    toString() {
-      return stringify(host[name]);
-    },
-  };
+  return state;
 }
 
-export function property(host, name, value) {
+export function defineProperty(host, name, value, options = {}) {
+  const { stringify = String } = options;
+
   if (name in host) {
     value = host[name];
   }
 
+  const state = defineValue(host, value, { stringify });
+
   Object.defineProperty(host, name, {
+    configurable: false,
+    enumerable: true,
     get() {
-      return value;
+      return state.value;
     },
     set(next) {
+      state.value = next;
+    },
+  });
+
+  return state;
+}
+
+export function defineValue(host, value, options = {}) {
+  const { stringify = String } = options;
+
+  return {
+    get value() {
+      return value;
+    },
+    set value(next) {
       if (next === value) return;
       value = next;
       host.update();
     },
-  });
-
-  return {
-    get value() {
-      return host[name];
-    },
-    set value(next) {
-      host[name] = next;
-    },
     toString() {
-      return String(host[name]);
+      return stringify(value);
     },
   };
 }
 
-export function state(host, value) {
-  return {
-    get value() {
-      return value;
-    },
-    set value(next) {
-      if (next === value) return;
-      value = next;
-      host.update();
-    },
-    toString() {
-      return String(value);
-    },
-  };
+function hyphenify(string) {
+  return string.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`);
+}
+
+function pascalify(string) {
+  return string.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase());
 }
