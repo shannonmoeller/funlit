@@ -5,119 +5,119 @@
 <title>funlit</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-    border: unset;
-    margin: unset;
-    padding: unset;
-    color: inherit;
-    font: inherit;
-  }
+	* {
+		box-sizing: border-box;
+		border: unset;
+		margin: unset;
+		padding: unset;
+		color: inherit;
+		font: inherit;
+	}
 
-  html,
-  body {
-    height: 100svh;
-  }
+	html,
+	body {
+		height: 100svh;
+	}
 
-  html {
-    color-scheme: dark light;
-    accent-color: orange;
-    background-color: canvas;
-    color: canvastext;
-    font: normal clamp(100%, 5vmin, 300%) / 1.5 system-ui;
-  }
+	html {
+		color-scheme: dark light;
+		accent-color: orange;
+		background-color: canvas;
+		color: canvastext;
+		font: normal clamp(100%, 5vmin, 300%) / 1.5 system-ui;
+	}
 
-  body {
-    display: grid;
-    place-content: safe center;
-  }
+	body {
+		display: grid;
+		place-content: safe center;
+	}
 
-  main {
-    display: grid;
-    gap: 1rem;
-    padding: 2rem;
-  }
+	main {
+		display: grid;
+		gap: 1rem;
+		padding: 2rem;
+	}
 
-  header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-  }
+	header {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+	}
 
-  h1 {
-    font-size: 2rem;
-  }
+	h1 {
+		font-size: 2rem;
+	}
 
-  nav {
-    display: flex;
-    gap: 1rem;
-  }
+	nav {
+		display: flex;
+		gap: 1rem;
+	}
 
-  a {
-    color: orange;
-    text-decoration: none;
-  }
+	a {
+		color: orange;
+		text-decoration: none;
+	}
 
-  a:is(:hover, :focus-visible) {
-    text-decoration: underline;
-  }
+	a:is(:hover, :focus-visible) {
+		text-decoration: underline;
+	}
 
-  button {
-    border-radius: 3em;
-    cursor: pointer;
-    touch-action: manipulation;
-    -webkit-user-select: none;
-    user-select: none;
-  }
+	button {
+		border-radius: 3em;
+		cursor: pointer;
+		touch-action: manipulation;
+		-webkit-user-select: none;
+		user-select: none;
+	}
 
-  header ~ * {
-    display: grid;
-    align-items: center;
-    grid-template-columns: 6ch repeat(auto-fit, minmax(0, 1fr));
-    gap: 0.5ch;
-    min-inline-size: 15rem;
-  }
+	header ~ * {
+		display: grid;
+		align-items: center;
+		grid-template-columns: 6ch repeat(auto-fit, minmax(0, 1fr));
+		gap: 0.5ch;
+		min-inline-size: 15rem;
+	}
 </style>
 
 <script type="importmap">
-  {
-    "imports": {
-      "funlit": "./funlit.js",
-      "lit-html": "https://unpkg.com/lit-html@3.1.1"
-    }
-  }
+	{
+		"imports": {
+			"funlit": "./funlit.js",
+			"lit-html": "https://unpkg.com/lit-html@3.1.1"
+		}
+	}
 </script>
 
 <script type="module">
-  import "./examples/fun-stepper.js";
-  import "./examples/fun-timer.js";
+	import './examples/fun-stepper.js';
+	import './examples/fun-timer.js';
 
-  const main = document.querySelector("main");
+	const main = document.querySelector('main');
 
-  const stepper = document.createElement("fun-stepper");
-  stepper.count = 30;
-  main.append(stepper);
+	const stepper = document.createElement('fun-stepper');
+	stepper.count = 30;
+	main.append(stepper);
 
-  const timer = document.createElement("fun-timer");
-  timer.duration = 60;
-  main.append(timer);
+	const timer = document.createElement('fun-timer');
+	timer.duration = 60;
+	main.append(timer);
 </script>
 
 <main>
-  <header>
-    <h1>funlit</h1>
+	<header>
+		<h1>funlit</h1>
 
-    <nav>
-      <a href="https://github.com/shannonmoeller/funlit">Github</a>
-      <a href="https://npm.im/funlit">npm</a>
-    </nav>
-  </header>
+		<nav>
+			<a href="https://github.com/shannonmoeller/funlit">Github</a>
+			<a href="https://npm.im/funlit">npm</a>
+		</nav>
+	</header>
 
-  <fun-stepper count="0"></fun-stepper>
-  <fun-stepper count="10"></fun-stepper>
-  <fun-stepper></fun-stepper>
+	<fun-stepper count="0"></fun-stepper>
+	<fun-stepper count="10"></fun-stepper>
+	<fun-stepper></fun-stepper>
 
-  <fun-timer duration="2"></fun-timer>
-  <fun-timer duration="10"></fun-timer>
-  <fun-timer></fun-timer>
+	<fun-timer duration="2"></fun-timer>
+	<fun-timer duration="10"></fun-timer>
+	<fun-timer></fun-timer>
 </main>

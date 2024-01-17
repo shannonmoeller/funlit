@@ -1,0 +1,16 @@
+{
+  "include": ["**/*.js"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "strict": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "paths": {
+      "funlit": ["./funlit.js"]
+    }
+  }
+}
