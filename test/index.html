@@ -1,0 +1,108 @@
+<!doctype html>
+<meta charset="utf8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<title>funlit - test</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    border: unset;
+    margin: unset;
+    padding: unset;
+    color: inherit;
+    font: inherit;
+  }
+
+  html {
+    color-scheme: dark light;
+    accent-color: orange;
+    background-color: canvas;
+    color: canvastext;
+    font: normal 100%/1.5 system-ui;
+  }
+
+  main {
+    padding: 2rem;
+  }
+
+  a {
+    color: orange;
+    text-decoration: none;
+  }
+
+  a:is(:hover, :focus-visible) {
+    text-decoration: underline;
+  }
+
+  button {
+    border-radius: 3em;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+</style>
+
+<script type="importmap">
+  {
+    "imports": {
+      "funlit": "../funlit.js",
+      "lit-html": "https://unpkg.com/lit-html@3.1.1"
+    }
+  }
+</script>
+
+<script type="module">
+  import { define, attr, prop, val, html } from "funlit";
+
+  define("test-connect", (host) => {
+    host.addEventListener("connect", async (event) => {
+      try {
+        console.log(event.type, host);
+        await host.updateComplete;
+        console.log("updateComplete", host);
+      } catch (error) {
+        console.error("updateError", host, error);
+      }
+    });
+  });
+
+  define("test-update", (host) => {
+    host.addEventListener("update", (event) => {
+      console.log(event.type, host);
+    });
+  });
+
+  define("test-update-error", (host) => {});
+
+  define("test-disconnect", (host) => {
+    host.addEventListener("disconnect", (event) => {
+      console.log(event.type, host);
+    });
+  });
+
+  define("test-attr", (host) => {
+    function reset() {
+      host.setAttribute("count", "0");
+    }
+  });
+
+  define("test-prop", (host) => {});
+
+  define("test-val", (host) => {});
+</script>
+
+<main>
+  <header>
+    <h1>Test</h1>
+  </header>
+
+  <test-connect></test-connect>
+  <test-update></test-update>
+  <test-update-error></test-update-error>
+  <test-disconnect></test-disconnect>
+  <test-attr></test-attr>
+  <test-prop></test-prop>
+  <test-val></test-val>
+</main>

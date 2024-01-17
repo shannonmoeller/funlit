@@ -1,9 +1,7 @@
 import { define, attr, html } from "funlit";
 
-define("fun-stepper", (host) => {
-  const count = attr(host, "count", 20, {
-    parse: Number,
-  });
+define("fun-stepper", () => {
+  const count = attr("count", 20, { parse: Number });
 
   function decrement() {
     count.value--;
@@ -14,27 +12,8 @@ define("fun-stepper", (host) => {
   }
 
   function reset() {
-    // count.value = 0;
-    host.setAttribute("count", "0");
+    count.value = 0;
   }
-
-  host.addEventListener("connect", async (event) => {
-    try {
-      console.log(event.type, host);
-      await host.updateComplete;
-      console.log("updateComplete", host);
-    } catch (error) {
-      console.error("updateError", host, error);
-    }
-  });
-
-  host.addEventListener("update", (event) => {
-    console.log(event.type, host);
-  });
-
-  host.addEventListener("disconnect", (event) => {
-    console.log(event.type, host);
-  });
 
   return () => html`
     ${count}

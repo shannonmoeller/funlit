@@ -5,8 +5,8 @@ Function Lit elements. Light DOM by default.
 ```js
 import { define, attr, html } from 'funlit';
 
-define('fun-stepper', (host) => {
-  const count = attr(host, 'count', 0, {
+define('my-stepper', () => {
+  const count = attr('count', 0, {
     parse: Number,
   });
 
@@ -27,10 +27,12 @@ define('fun-stepper', (host) => {
 ```
 
 ```html
-<fun-stepper></fun-stepper>
-<fun-stepper count="10"></fun-stepper>
-<script>
-  const stepper = document.createElement('fun-stepper');
+<my-stepper></my-stepper>
+
+<my-stepper count="10"></my-stepper>
+
+<script type="module">
+  const stepper = document.createElement('my-stepper');
   stepper.count = 20;
   document.body.append(stepper);
 </script>

@@ -8,6 +8,8 @@ export {
   html,
 };
 
+let currentHost = null;
+
 export class FunlitElement extends HTMLElement {
   #init = null;
   #isInitialized = false;
@@ -16,87 +18,68 @@ export class FunlitElement extends HTMLElement {
 
   constructor(init) {
     super();
+
     this.#init = init;
+    this.update = this.update.bind(this);
   }
 
   adoptedCallback() {
-    this.dispatchEvent(new CustomEvent("adopt"));
+    emit(this, "adopt");
   }
 
   connectedCallback() {
     if (!this.isConnected) return;
 
     if (!this.#isInitialized) {
+      currentHost = this;
       this.#render = this.#init(this);
       this.#isInitialized = true;
+      currentHost = null;
     }
 
     this.update();
-    this.dispatchEvent(new CustomEvent("connect"));
+    emit(this, "connect");
   }
 
   disconnectedCallback() {
     if (this.isConnected) return;
 
-    this.dispatchEvent(new CustomEvent("disconnect"));
+    emit(this, "disconnect");
   }
 
-  update = () => {
-    return (this.updateComplete ??= Promise
-      // batch updates
-      .resolve()
-      .then(() => {
-        render(this.#render?.(), this);
-      })
-      .finally(() => {
-        this.updateComplete = null;
-        this.dispatchEvent(new CustomEvent("update"));
-      }));
-  };
+  update() {
+    return (this.updateComplete ??= Promise.resolve().then(() => {
+      this.updateComplete = null;
+      render(this.#render?.(), this);
+      emit(this, "update");
+    }));
+  }
 }
 
 export function defineElement(name, init) {
-  class FunlitComponent extends FunlitElement {
+  class DefinedFunlitElement extends FunlitElement {
     constructor() {
       super(init);
     }
   }
 
-  Object.defineProperty(FunlitComponent, "name", {
+  Object.defineProperty(DefinedFunlitElement, "name", {
     value: `${pascalify(name)}Element`,
   });
 
-  customElements.define(name, FunlitComponent);
+  customElements.define(name, DefinedFunlitElement);
 
-  return FunlitComponent;
+  return DefinedFunlitElement;
 }
 
-export function defineAttribute(host, name, value, options = {}) {
+export function defineAttribute(name, value, options = {}) {
+  const host = getHost();
   const {
     attribute = hyphenify(name),
     boolean = false,
     parse = String,
     stringify = String,
   } = options;
-
-  if (name in host) {
-    value = host[name];
-  } else if (host.hasAttribute(attribute)) {
-    value = boolean ? true : parse(host.getAttribute(attribute));
-  }
-
-  const state = defineValue(host, value, { stringify });
-
-  Object.defineProperty(host, name, {
-    configurable: false,
-    enumerable: true,
-    get() {
-      return state.value;
-    },
-    set(next) {
-      state.value = next;
-    },
-  });
 
   new MutationObserver(() => {
     host[name] = boolean
@@ -106,33 +89,57 @@ export function defineAttribute(host, name, value, options = {}) {
     attributeFilter: [attribute],
   });
 
-  return state;
+  if (name in host) {
+    value = host[name];
+  } else if (host.hasAttribute(attribute)) {
+    value = boolean ? true : parse(host.getAttribute(attribute));
+  }
+
+  return createProperty(host, name, value, options);
 }
 
-export function defineProperty(host, name, value, options = {}) {
-  const { stringify = String } = options;
+export function defineProperty(name, value, options = {}) {
+  const host = getHost();
 
   if (name in host) {
     value = host[name];
   }
 
-  const state = defineValue(host, value, { stringify });
+  return createProperty(host, name, value, options);
+}
+
+export function defineValue(value, options = {}) {
+  const host = getHost();
+
+  return createValue(host, value, options);
+}
+
+export function getHost() {
+  const host = currentHost;
+
+  if (!host) throw new Error("Missing host.");
+
+  return host;
+}
+
+function createProperty(host, name, value, options = {}) {
+  const ref = createValue(host, value, options);
 
   Object.defineProperty(host, name, {
     configurable: false,
     enumerable: true,
     get() {
-      return state.value;
+      return ref.value;
     },
     set(next) {
-      state.value = next;
+      ref.value = next;
     },
   });
 
-  return state;
+  return ref;
 }
 
-export function defineValue(host, value, options = {}) {
+function createValue(host, value, options = {}) {
   const { stringify = String } = options;
 
   return {
@@ -141,6 +148,7 @@ export function defineValue(host, value, options = {}) {
     },
     set value(next) {
       if (next === value) return;
+
       value = next;
       host.update();
     },
@@ -148,6 +156,10 @@ export function defineValue(host, value, options = {}) {
       return stringify(value);
     },
   };
+}
+
+function emit(host, type, detail = null) {
+  return host.dispatchEvent(new CustomEvent(type, { detail }));
 }
 
 function hyphenify(string) {

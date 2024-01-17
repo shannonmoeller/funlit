@@ -7,6 +7,7 @@
 <style>
   * {
     box-sizing: border-box;
+    border: unset;
     margin: unset;
     padding: unset;
     color: inherit;
@@ -19,11 +20,11 @@
   }
 
   html {
-    accent-color: orange;
     color-scheme: dark light;
+    accent-color: orange;
     background-color: canvas;
     color: canvastext;
-    font: normal clamp(1rem, 5vmin, 10rem) / 1.5 system-ui;
+    font: normal clamp(100%, 5vmin, 300%) / 1.5 system-ui;
   }
 
   body {
@@ -62,6 +63,8 @@
   }
 
   button {
+    border-radius: 3em;
+    cursor: pointer;
     touch-action: manipulation;
     -webkit-user-select: none;
     user-select: none;
