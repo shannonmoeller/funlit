@@ -1,4 +1,4 @@
-import { html, render } from 'lit-html';
+import { html, svg, nothing, render } from 'lit-html';
 
 export {
 	defineElement as define,
@@ -6,6 +6,8 @@ export {
 	defineProperty as prop,
 	defineValue as val,
 	html,
+	svg,
+	nothing,
 };
 
 /**
@@ -184,7 +186,7 @@ export function defineValue(value, options = {}) {
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-function createProperty(key, value, options = {}) {
+export function createProperty(key, value, options = {}) {
 	const { host = getHost() } = options;
 	const ref = createValue(value, options);
 
@@ -210,7 +212,7 @@ function createProperty(key, value, options = {}) {
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-function createValue(value, options = {}) {
+export function createValue(value, options = {}) {
 	const { host = getHost(), stringify = String } = options;
 
 	return {

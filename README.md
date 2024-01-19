@@ -37,3 +37,25 @@ define('my-stepper', MyStepper);
   document.body.append(stepper);
 </script>
 ```
+
+## API
+
+### lit-html
+
+Reexports `html`, `svg`, and `nothing` from `lit-html`. Anything else you need (such as directives) should be imported from `lit-html` directly.
+
+### define(tag, init)
+
+Alias: `defineElement`
+
+### attr(key, value[, options])
+
+Alias: `defineAttribute`
+
+### prop(key, value[, options])
+
+Alias: `defineProperty`
+
+### val(value[, options])
+
+Alias: `defineValue`
