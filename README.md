@@ -23,31 +23,31 @@ $ npm install funlit lit-html
 
 ## Usage
 
-```js
-import { define, attr, html } from 'funlit';
-
-function MyStepper() {
-  const count = attr('count', 0, { parse: Number });
-
-  function decrement() {
-    count.value--;
-  }
-
-  function increment() {
-    count.value++;
-  }
-
-  return () => html`
-    <button @click=${decrement}>-</button>
-    ${count}
-    <button @click=${increment}>+</button>
-  `;
-}
-
-define('my-stepper', MyStepper);
-```
-
 ```html
+<script type="module">
+  import { define, attr, html } from 'funlit';
+
+  function MyStepper() {
+    const count = attr('count', 0, { parse: Number });
+
+    function decrement() {
+      count.value--;
+    }
+
+    function increment() {
+      count.value++;
+    }
+
+    return () => html`
+      <button @click=${decrement}>-</button>
+      ${count}
+      <button @click=${increment}>+</button>
+    `;
+  }
+
+  define('my-stepper', MyStepper);
+</script>
+
 <my-stepper></my-stepper>
 
 <my-stepper count="10"></my-stepper>
