@@ -40,9 +40,9 @@ define('my-stepper', MyStepper);
 
 ## API
 
-### lit-html
+### html, svg, nothing
 
-Reexports `html`, `svg`, and `nothing` from `lit-html`. Anything else you need (such as directives) should be imported from `lit-html` directly.
+This package reexports `html`, `svg`, and `nothing` from [lit-html](https://npm.im/lit-html) as a convenience. Anything else you might need (such as directives) should be imported from `lit-html` itself.
 
 ### define(tag, init)
 

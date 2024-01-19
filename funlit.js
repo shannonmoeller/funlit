@@ -78,7 +78,7 @@ export class FunlitElement extends HTMLElement {
 	update = () => {
 		return (this.updateComplete ??= Promise.resolve().then(() => {
 			this.updateComplete = null;
-			render(this.#render?.(), this);
+			render(this.#render?.(), this.shadowRoot || this);
 			this.dispatchEvent(new CustomEvent('update'));
 		}));
 	};
@@ -241,7 +241,7 @@ export function getHost() {
  * @param {HTMLElement & Updateable} host
  */
 export function setHost(host) {
-	if (currentHost) throw new Error('Host already exists');
+	if (currentHost) throw new Error('Existing host.');
 
 	currentHost = host;
 
