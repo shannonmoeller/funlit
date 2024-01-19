@@ -83,9 +83,9 @@ export class FunlitElement extends HTMLElement {
 
 	update = () => {
 		return (this.updateComplete ??= Promise.resolve().then(() => {
+			this.dispatchEvent(new CustomEvent('update'));
 			this.updateComplete = null;
 			render(this.#render?.(), this.shadowRoot || this);
-			this.dispatchEvent(new CustomEvent('update'));
 		}));
 	};
 }

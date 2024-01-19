@@ -66,12 +66,28 @@
 				console.error('updateError', host, error);
 			}
 		});
+
+		return () => {
+			console.log('render', host);
+			return html`...`;
+		};
 	});
 
 	define('test-update', (host) => {
-		host.addEventListener('update', (event) => {
-			console.log(event.type, host);
+		host.addEventListener('update', async (event) => {
+			try {
+				console.log(event.type, host);
+				await host.updateComplete;
+				console.log('updateComplete', host);
+			} catch (error) {
+				console.error('updateError', host, error);
+			}
 		});
+
+		return () => {
+			console.log('render', host);
+			return html`...`;
+		};
 	});
 
 	define('test-update-error', (host) => {});
