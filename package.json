@@ -39,9 +39,6 @@
       "@typescript-eslint/no-unused-vars": "error"
     }
   },
-  "stylelint": {
-    "extends": "stylelint-config-recommended"
-  },
   "prettier": {
     "singleQuote": true
   }

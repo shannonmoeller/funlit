@@ -9,147 +9,170 @@ export {
 };
 
 /**
- * @callback Render
+ * @callback Renderer
  * @returns {import('lit-html').TemplateResult}
  */
 
 /**
  * @callback Init
  * @param {FunlitElement} host
- * @returns {Render}
+ * @returns {Renderer | null | undefined}
  */
 
 /**
- * @type {FunlitElement | null}
+ * @template V
+ * @typedef {object} ValueRef
+ * @prop {V} value
+ * @prop {() => string} toString
  */
-let currentHost = null;
 
 export class FunlitElement extends HTMLElement {
-	/** @type {Init | null | undefined} */
-	#init = null;
-	/** @type boolean */
+	/** @type {Init | null} */
+	init = null;
+
+	/** @type {boolean} */
 	#isInitialized = false;
-	/** @type {Render | null | undefined} */
+
+	/** @type {Renderer | null | undefined} */
 	#render = null;
+
 	/** @type {Promise<void> | null} */
 	updateComplete = null;
 
-	/**
-	 * @param {Init} init
-	 */
-	constructor(init) {
-		super();
-
-		this.#init = init;
-		this.update = this.update.bind(this);
-	}
-
 	adoptedCallback() {
-		emit(this, 'adopt');
+		this.dispatchEvent(new CustomEvent('adopt'));
 	}
 
 	connectedCallback() {
 		if (!this.isConnected) return;
 
 		if (!this.#isInitialized) {
-			currentHost = this;
-			this.#render = this.#init?.(this);
+			this.#render = this.init?.(this);
 			this.#isInitialized = true;
-			currentHost = null;
 		}
 
 		this.update();
-		emit(this, 'connect');
+		this.dispatchEvent(new CustomEvent('connect'));
 	}
 
 	disconnectedCallback() {
 		if (this.isConnected) return;
 
-		emit(this, 'disconnect');
+		this.dispatchEvent(new CustomEvent('disconnect'));
 	}
 
-	update() {
+	update = () => {
 		return (this.updateComplete ??= Promise.resolve().then(() => {
 			this.updateComplete = null;
 			render(this.#render?.(), this);
-			emit(this, 'update');
+			this.dispatchEvent(new CustomEvent('update'));
 		}));
-	}
+	};
 }
 
 /**
- * @param {string} name
+ * @param {string} tag
  * @param {Init} init
  */
-export function defineElement(name, init) {
-	class DefinedFunlitElement extends FunlitElement {
-		constructor() {
-			super(init);
-		}
+export function defineElement(tag, init) {
+	class CustomFunlitElement extends FunlitElement {
+		init = init;
 	}
 
-	Object.defineProperty(DefinedFunlitElement, 'name', {
-		value: `${pascalify(name)}Element`,
+	Object.defineProperty(CustomFunlitElement, 'name', {
+		value: `${pascalify(tag)}Element`,
 	});
 
-	customElements.define(name, DefinedFunlitElement);
+	customElements.define(tag, CustomFunlitElement);
 
-	return DefinedFunlitElement;
+	return CustomFunlitElement;
 }
 
-export function defineAttribute(name, value, options = {}) {
-	const host = getHost();
+/**
+ * @template V
+ * @template {string} K
+ * @param {FunlitElement} host
+ * @param {K} key
+ * @param {V} value
+ * @param {object} [options]
+ * @param {string} [options.attribute]
+ * @param {boolean} [options.boolean]
+ * @param {(value: string) => V} [options.parse]
+ * @param {(value: V) => string} [options.stringify]
+ * @returns {ValueRef<V>}
+ */
+export function defineAttribute(host, key, value, options = {}) {
 	const {
-		attribute = hyphenify(name),
+		attribute = hyphenify(key),
 		boolean = false,
 		parse = String,
 	} = options;
 
 	new MutationObserver(() => {
-		host[name] = boolean
+		// @ts-expect-error: This is fine.
+		host[key] = boolean
 			? host.hasAttribute(attribute)
-			: parse(host.getAttribute(attribute));
+			: parse(host.getAttribute(attribute) ?? '');
 	}).observe(host, {
 		attributeFilter: [attribute],
 	});
 
-	if (name in host) {
-		value = host[name];
+	if (key in host) {
+		// @ts-expect-error: This is fine.
+		value = host[key];
 	} else if (host.hasAttribute(attribute)) {
-		value = boolean ? true : parse(host.getAttribute(attribute));
+		// @ts-expect-error: This is fine.
+		value = boolean ? true : parse(host.getAttribute(attribute) ?? '');
 	}
 
-	return createProperty(host, name, value, options);
+	return createProperty(host, key, value, options);
 }
 
-export function defineProperty(name, value, options = {}) {
-	const host = getHost();
-
-	if (name in host) {
-		value = host[name];
+/**
+ * @template V
+ * @template {string} K
+ * @param {FunlitElement} host
+ * @param {K} key
+ * @param {V} value
+ * @param {object} [options]
+ * @param {(value: V) => string} [options.stringify]
+ * @returns {ValueRef<V>}
+ */
+export function defineProperty(host, key, value, options = {}) {
+	if (key in host) {
+		// @ts-expect-error: This is fine.
+		value = host[key];
 	}
 
-	return createProperty(host, name, value, options);
+	return createProperty(host, key, value, options);
 }
 
-export function defineValue(value, options = {}) {
-	const host = getHost();
-
+/**
+ * @template V
+ * @param {FunlitElement} host
+ * @param {V} value
+ * @param {object} [options]
+ * @param {(value: V) => string} [options.stringify]
+ * @returns {ValueRef<V>}
+ */
+export function defineValue(host, value, options = {}) {
 	return createValue(host, value, options);
 }
 
-export function getHost() {
-	const host = currentHost;
-
-	if (!host) throw new Error('Missing host.');
-
-	return host;
-}
-
-function createProperty(host, name, value, options = {}) {
+/**
+ * @template V
+ * @template {string} K
+ * @param {FunlitElement} host
+ * @param {K} key
+ * @param {V} value
+ * @param {object} [options]
+ * @param {(value: V) => string} [options.stringify]
+ * @returns {ValueRef<V>}
+ */
+function createProperty(host, key, value, options = {}) {
 	const ref = createValue(host, value, options);
 
-	Object.defineProperty(host, name, {
+	Object.defineProperty(host, key, {
 		configurable: false,
 		enumerable: true,
 		get() {
@@ -163,6 +186,14 @@ function createProperty(host, name, value, options = {}) {
 	return ref;
 }
 
+/**
+ * @template V
+ * @param {FunlitElement} host
+ * @param {V} value
+ * @param {object} [options]
+ * @param {(value: V) => string} [options.stringify]
+ * @returns {ValueRef<V>}
+ */
 function createValue(host, value, options = {}) {
 	const { stringify = String } = options;
 
@@ -182,14 +213,16 @@ function createValue(host, value, options = {}) {
 	};
 }
 
-function emit(host, type, detail = null) {
-	return host.dispatchEvent(new CustomEvent(type, { detail }));
+/**
+ * @param {string} value
+ */
+function hyphenify(value) {
+	return value.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`);
 }
 
-function hyphenify(string) {
-	return string.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`);
-}
-
-function pascalify(string) {
-	return string.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase());
+/**
+ * @param {string} value
+ */
+function pascalify(value) {
+	return value.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase());
 }
