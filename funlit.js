@@ -20,11 +20,19 @@ export {
  */
 
 /**
+ * @typedef Updateable
+ * @prop {() => void} update
+ */
+
+/**
  * @template V
  * @typedef {object} ValueRef
  * @prop {V} value
  * @prop {() => string} toString
  */
+
+/** @type {FunlitElement | null} */
+let currentHost = null;
 
 export class FunlitElement extends HTMLElement {
 	/** @type {Init | null} */
@@ -47,8 +55,10 @@ export class FunlitElement extends HTMLElement {
 		if (!this.isConnected) return;
 
 		if (!this.#isInitialized) {
+			currentHost = this;
 			this.#render = this.init?.(this);
 			this.#isInitialized = true;
+			currentHost = null;
 		}
 
 		this.update();
@@ -91,22 +101,25 @@ export function defineElement(tag, init) {
 /**
  * @template V
  * @template {string} K
- * @param {FunlitElement} host
  * @param {K} key
  * @param {V} value
  * @param {object} [options]
  * @param {string} [options.attribute]
  * @param {boolean} [options.boolean]
+ * @param {HTMLElement & Updateable} [options.host]
  * @param {(value: string) => V} [options.parse]
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-export function defineAttribute(host, key, value, options = {}) {
+export function defineAttribute(key, value, options = {}) {
 	const {
 		attribute = hyphenify(key),
 		boolean = false,
+		host = getHost(),
 		parse = String,
 	} = options;
+
+	if (!host) throw new Error('Missing host.');
 
 	new MutationObserver(() => {
 		// @ts-expect-error: This is fine.
@@ -125,52 +138,60 @@ export function defineAttribute(host, key, value, options = {}) {
 		value = boolean ? true : parse(host.getAttribute(attribute) ?? '');
 	}
 
-	return createProperty(host, key, value, options);
+	return createProperty(key, value, options);
 }
 
 /**
  * @template V
  * @template {string} K
- * @param {FunlitElement} host
  * @param {K} key
  * @param {V} value
  * @param {object} [options]
+ * @param {Updateable} [options.host]
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-export function defineProperty(host, key, value, options = {}) {
+export function defineProperty(key, value, options = {}) {
+	const { host = getHost() } = options;
+
+	if (!host) throw new Error('Missing host.');
+
 	if (key in host) {
 		// @ts-expect-error: This is fine.
 		value = host[key];
 	}
 
-	return createProperty(host, key, value, options);
+	return createProperty(key, value, options);
 }
 
 /**
  * @template V
- * @param {FunlitElement} host
  * @param {V} value
  * @param {object} [options]
+ * @param {Updateable} [options.host]
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-export function defineValue(host, value, options = {}) {
-	return createValue(host, value, options);
+export function defineValue(value, options = {}) {
+	return createValue(value, options);
 }
 
 /**
  * @template V
  * @template {string} K
- * @param {FunlitElement} host
  * @param {K} key
  * @param {V} value
  * @param {object} [options]
+ * @param {Updateable} [options.host]
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-function createProperty(host, key, value, options = {}) {
-	const ref = createValue(host, value, options);
+function createProperty(key, value, options = {}) {
+	const { host = getHost() } = options;
+
+	if (!host) throw new Error('Missing host.');
+
+	const ref = createValue(value, options);
 
 	Object.defineProperty(host, key, {
 		configurable: false,
@@ -188,14 +209,16 @@ function createProperty(host, key, value, options = {}) {
 
 /**
  * @template V
- * @param {FunlitElement} host
  * @param {V} value
  * @param {object} [options]
+ * @param {Updateable} [options.host]
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-function createValue(host, value, options = {}) {
-	const { stringify = String } = options;
+function createValue(value, options = {}) {
+	const { host = getHost(), stringify = String } = options;
+
+	if (!host) throw new Error('Missing host.');
 
 	return {
 		get value() {
@@ -211,6 +234,10 @@ function createValue(host, value, options = {}) {
 			return stringify(value);
 		},
 	};
+}
+
+export function getHost() {
+	return currentHost;
 }
 
 /**

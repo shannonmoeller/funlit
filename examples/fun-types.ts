@@ -1,9 +1,9 @@
 import { define, attr, prop, val, html } from '../funlit.js';
 
 export const TestTypesElement = define('test-types', (host) => {
-	const foo = attr(host, 'foo', 100, { parse: Number });
-	const bar = prop(host, 'bar', 'hello');
-	const baz = val(host, true);
+	const foo = attr('foo', 100, { parse: Number });
+	const bar = prop('bar', 'hello');
+	const baz = val(true);
 
 	console.log(host.foo, foo.value, host.foo === foo.value);
 	console.log(host.bar, bar.value, host.bar === bar.value);
