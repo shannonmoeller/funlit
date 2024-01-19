@@ -6,9 +6,7 @@ Function Lit elements. Light DOM by default.
 import { define, attr, html } from 'funlit';
 
 define('my-stepper', () => {
-  const count = attr('count', 0, {
-    parse: Number,
-  });
+  const count = attr('count', 0, { parse: Number });
 
   function decrement() {
     count.value--;
