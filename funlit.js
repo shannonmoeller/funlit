@@ -1,3 +1,9 @@
+/*!
+ * @license MIT
+ * Copyright (c) 2024 Shannon Moeller
+ * https://github.com/shannonmoeller/funlit
+ */
+
 import { html, svg, nothing, render } from 'lit-html';
 
 export {

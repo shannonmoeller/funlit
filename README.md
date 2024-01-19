@@ -2,6 +2,25 @@
 
 Function Lit elements. Light DOM by default.
 
+## Install
+
+```
+$ npm install funlit
+```
+
+```html
+<script type="importmap">
+  {
+    "imports": {
+      "funlit": "https://unpkg.com/funlit",
+      "lit-html": "https://unpkg.com/lit-html"
+    }
+  }
+</script>
+```
+
+## Usage
+
 ```js
 import { define, attr, html } from 'funlit';
 
@@ -59,3 +78,7 @@ Alias: `defineProperty`
 ### val(value[, options])
 
 Alias: `defineValue`
+
+----
+
+MIT © [Shannon Moeller](http://shannonmoeller.com)
