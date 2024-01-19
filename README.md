@@ -5,7 +5,7 @@ Function Lit elements. Light DOM by default.
 ```js
 import { define, attr, html } from 'funlit';
 
-define('my-stepper', () => {
+function MyStepper() {
   const count = attr('count', 0, { parse: Number });
 
   function decrement() {
@@ -22,6 +22,8 @@ define('my-stepper', () => {
     <button @click=${increment}>+</button>
   `;
 }
+
+define('my-stepper', MyStepper);
 ```
 
 ```html

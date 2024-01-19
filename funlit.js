@@ -31,7 +31,7 @@ export {
  * @prop {() => string} toString
  */
 
-/** @type {FunlitElement | null} */
+/** @type {(HTMLElement & Updateable) | null} */
 let currentHost = null;
 
 export class FunlitElement extends HTMLElement {
@@ -55,10 +55,12 @@ export class FunlitElement extends HTMLElement {
 		if (!this.isConnected) return;
 
 		if (!this.#isInitialized) {
-			currentHost = this;
+			const unsetHost = setHost(this);
+
 			this.#render = this.init?.(this);
 			this.#isInitialized = true;
-			currentHost = null;
+
+			unsetHost();
 		}
 
 		this.update();
@@ -119,8 +121,6 @@ export function defineAttribute(key, value, options = {}) {
 		parse = String,
 	} = options;
 
-	if (!host) throw new Error('Missing host.');
-
 	new MutationObserver(() => {
 		// @ts-expect-error: This is fine.
 		host[key] = boolean
@@ -154,8 +154,6 @@ export function defineAttribute(key, value, options = {}) {
 export function defineProperty(key, value, options = {}) {
 	const { host = getHost() } = options;
 
-	if (!host) throw new Error('Missing host.');
-
 	if (key in host) {
 		// @ts-expect-error: This is fine.
 		value = host[key];
@@ -188,9 +186,6 @@ export function defineValue(value, options = {}) {
  */
 function createProperty(key, value, options = {}) {
 	const { host = getHost() } = options;
-
-	if (!host) throw new Error('Missing host.');
-
 	const ref = createValue(value, options);
 
 	Object.defineProperty(host, key, {
@@ -218,8 +213,6 @@ function createProperty(key, value, options = {}) {
 function createValue(value, options = {}) {
 	const { host = getHost(), stringify = String } = options;
 
-	if (!host) throw new Error('Missing host.');
-
 	return {
 		get value() {
 			return value;
@@ -237,7 +230,22 @@ function createValue(value, options = {}) {
 }
 
 export function getHost() {
+	if (!currentHost) throw new Error('Missing host.');
+
 	return currentHost;
+}
+
+/**
+ * @param {HTMLElement & Updateable} host
+ */
+export function setHost(host) {
+	if (currentHost) throw new Error('Host already exists');
+
+	currentHost = host;
+
+	return () => {
+		currentHost = null;
+	};
 }
 
 /**
