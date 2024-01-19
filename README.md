@@ -1,4 +1,4 @@
-# funlit
+# 🪵 funlit
 
 Function Lit elements with reactive attributes, properties, and values. Light DOM by default.
 
