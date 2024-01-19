@@ -7,7 +7,7 @@ Function Lit elements with reactive attributes, properties, and values. Light DO
 ## Install
 
 ```
-$ npm install funlit
+$ npm install funlit lit-html
 ```
 
 ```html
