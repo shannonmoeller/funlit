@@ -69,17 +69,48 @@ This package reexports `html`, `svg`, and `nothing` from [lit-html](https://npm.
 
 Alias: `defineElement`
 
-### attr(key, value[, options])
+TODO
+
+### attr(key[, value[, options]])
 
 Alias: `defineAttribute`
 
-### prop(key, value[, options])
+TODO
+
+### prop(key[, value[, options]])
 
 Alias: `defineProperty`
 
-### val(value[, options])
+TODO
+
+### val([value[, options]])
 
 Alias: `defineValue`
+
+TODO
+
+## Lifecycle
+
+### init(host)
+
+To define an element, you specify a tag name and an `init` function. The `init` function is called once per instance of the element (the first time the element is connected) and is passed a reference to the element. [Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitted as `adopt`, `connect`, and `disconnect` non-bubbling events, as well as an `update` event after each render.
+
+```js
+define('my-thing', (host) => {
+  host.addEventListener('adopt', () => {});
+  host.addEventListener('connect', () => {});
+  host.addEventListener('disconnect', () => {});
+  host.addEventListener('update', () => {});
+});
+```
+
+### host.update()
+
+The `update` method is automatically called any time a defined attribute, property, or value changes. Updates are batched so it's safe to update any number of values at a time without causing unnecessary rerenders. It may also be called directly as desired. Returns a promise that resolves after the resulting rerender happens.
+
+### host.updateComplete
+
+The same promise as is returned by `.update()`.
 
 ----
 
