@@ -93,7 +93,7 @@ TODO
 
 ### init(host)
 
-To define an element, you specify a tag name and an `init` function. The `init` function is called once per instance of the element (the first time the element is connected) and is passed a reference to the element. [Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitted as `adopt`, `connect`, and `disconnect` non-bubbling events, as well as an `update` event after each render.
+To define an element you specify a tag name and an `init` function. The `init` function is called once per instance of the element (the first time the element is connected) and is passed a reference to the element. [Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitted as `adopt`, `connect`, and `disconnect` non-bubbling events, as well as an `update` event after each render.
 
 ```js
 define('my-thing', (host) => {
@@ -106,11 +106,11 @@ define('my-thing', (host) => {
 
 ### host.update()
 
-The `update` method is automatically called any time a defined attribute, property, or value changes. Updates are batched so it's safe to update any number of values at a time without causing unnecessary rerenders. It may also be called directly as desired. Returns a promise that resolves after the resulting rerender happens.
+The `update` method is automatically called any time a defined attribute, property, or value changes and may also be called directly. Updates are batched so it's safe to update any number of values at a time without causing unnecessary rerenders. Returns a promise that resolves after the resulting rerender happens.
 
 ### host.updateComplete
 
-The same promise as is returned by `.update()`.
+The same promise as is returned by `.update()`. A new promise is created per update-render cycle.
 
 ----
 
