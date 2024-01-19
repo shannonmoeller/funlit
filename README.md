@@ -1,6 +1,8 @@
 # funlit
 
-Function Lit elements. Light DOM by default.
+Function Lit elements with reactive attributes, properties, and values. Light DOM by default.
+
+[Live demo](https://shannonmoeller.github.io/funlit).
 
 ## Install
 
