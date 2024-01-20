@@ -5,7 +5,7 @@
   "author": "Shannon Moeller <me@shannonmoeller.com>",
   "license": "MIT",
   "scripts": {
-    "preversion": "npm run lint && npm run build",
+    "preversion": "npm run lint-js && npm run lint-format && npm run build",
     "lint": "npm run lint-js && npm run lint-format && npm run lint-types",
     "lint-js": "eslint --ignore-path .gitignore --fix '**/*.{js,ts}'",
     "lint-format": "prettier --ignore-path .gitignore --write '**/*.{html,css,js,ts}'",
