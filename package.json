@@ -5,10 +5,18 @@
   "author": "Shannon Moeller <me@shannonmoeller.com>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint --fix '**/*.{js,ts}' && prettier --write '**/*.{html,css,js}' && tsc"
+    "prepare": "npm run lint && npm run build",
+    "lint": "npm run lint-js && npm run lint-format && npm run lint-types",
+    "lint-js": "eslint --fix '**/*.{js,ts}'",
+    "lint-format": "prettier --write '**/*.{html,css,js,ts}'",
+    "lint-types": "tsc",
+    "build": "tsc -p tsconfig.build.json"
   },
   "type": "module",
   "main": "funlit.js",
+  "files": [
+    "*.{d.ts,d.ts.map,js,md}"
+  ],
   "peerDependencies": {
     "lit-html": ">= 2.0.0"
   },

@@ -1,6 +1,6 @@
 # 🪵 funlit
 
-Function Lit elements with reactive attributes, properties, and values. Light DOM by default.
+Function [Lit](https://npm.im/lit-html) elements with reactive attributes, properties, and values. Light DOM by default.
 
 [Live demo](https://shannonmoeller.github.io/funlit).
 
@@ -93,7 +93,7 @@ TODO
 
 ### init(host)
 
-To define an element you specify a tag name and an `init` function. The `init` function is called once per instance of the element (the first time the element is connected) with a reference to the element. [Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitted as `adopt`, `connect`, and `disconnect` non-bubbling events, as well as an `update` event for each render.
+To define an element you specify a tag name and an `init` function. The `init` function is called once per instance of the element (the first time the element is connected) with a reference to the element. [Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitte non-bubbling `adopt`, `connect`, and `disconnect` events, as well as an `update` event for each render.
 
 ```js
 define('my-thing', (host) => {
