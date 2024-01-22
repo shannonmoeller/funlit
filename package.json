@@ -6,11 +6,12 @@
   "license": "MIT",
   "scripts": {
     "preversion": "npm run lint-js && npm run lint-format && npm run build",
+    "postpublish": "del-cli '**/*.{d.ts,d.ts.map}' '!node_modules'",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "npm run lint-js && npm run lint-format && npm run lint-types",
     "lint-js": "eslint --ignore-path .gitignore --fix '**/*.{js,ts}'",
     "lint-format": "prettier --ignore-path .gitignore --write '**/*.{html,css,js,ts}'",
-    "lint-types": "tsc",
-    "build": "tsc -p tsconfig.build.json"
+    "lint-types": "tsc"
   },
   "type": "module",
   "main": "funlit.js",
@@ -23,13 +24,17 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
+    "del-cli": "^5.1.0",
     "eslint": "^8.56.0",
     "lit-html": "^3.1.1",
     "prettier": "^3.2.4",
     "typescript": "^5.3.3"
   },
   "eslintConfig": {
-    "extends": "eslint:recommended",
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
     "plugins": [
       "@typescript-eslint"
     ],
@@ -42,10 +47,6 @@
       "browser": true,
       "es6": true,
       "node": true
-    },
-    "rules": {
-      "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": "error"
     }
   },
   "prettier": {
