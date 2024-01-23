@@ -65,7 +65,7 @@ $ npm install funlit lit-html
 
 This package reexports `html`, `svg`, and `nothing` from [lit-html](https://npm.im/lit-html) as a convenience. Anything else you might need (such as directives) should be imported from `lit-html` itself.
 
-### define(tag, init)
+### define(tagName, init)
 
 Alias: `defineElement`
 
