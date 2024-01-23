@@ -270,37 +270,3 @@ function hyphenify(value) {
 function pascalify(value) {
 	return value?.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase()) ?? '';
 }
-
-/**
- * @type {FunlitElementConstructor<{
- *   foo: number;
- *   bar: string | null
- * }>}
- */
-const FooBarElement = defineElement('foo-bar', (host) => {
-	const foo = defineAttribute(host, 'foo', 123);
-	const bar = defineProperty(host, 'bar', null);
-	const baz = defineValue(host, true);
-
-	console.log(host.foo);
-	console.log(foo.value);
-	console.log(host.bar);
-	console.log(bar.value);
-	console.log(baz.value);
-
-	return () => html``;
-});
-
-const a = new FooBarElement();
-
-console.log(a.foo);
-console.log(a.bar);
-console.log(a.update);
-
-const b = /** @type {InstanceType<typeof FooBarElement>} */ (
-	document.createElement('foo-bar')
-);
-
-console.log(b.foo);
-console.log(b.bar);
-console.log(b.update);
