@@ -27,7 +27,7 @@ export {
 
 /**
  * @template {object} T
- * @typedef {{ new(): FunlitElementInstance<T> }} FunlitElementConstructor
+ * @typedef {{ new(): FunlitElementInstance<T>; tagName: string }} FunlitElementConstructor
  */
 
 /**
@@ -116,20 +116,11 @@ export class FunlitElement extends HTMLElement {
  * @param {Init<T>} init
  */
 export function defineElement(tagName, init) {
-	/** @extends {FunlitElement<T>} */
-	class CustomFunlitElement extends FunlitElement {
-		constructor() {
-			super(init);
-		}
-	}
-
-	Object.defineProperty(CustomFunlitElement, 'name', {
-		value: `${pascalify(tagName)}Element`,
-	});
+	const CustomFunlitElement = createElement(tagName, init);
 
 	customElements.define(tagName, CustomFunlitElement);
 
-	return /** @type {FunlitElementConstructor<T>} */ (CustomFunlitElement);
+	return CustomFunlitElement;
 }
 
 /**
@@ -200,6 +191,28 @@ export function defineProperty(host, key, value, options = {}) {
  */
 export function defineValue(host, value, options = {}) {
 	return createValue(host, value, options);
+}
+
+/**
+ * @template {object} T
+ * @param {string} tagName
+ * @param {Init<T>} init
+ */
+export function createElement(tagName, init) {
+	/** @extends {FunlitElement<T>} */
+	class CustomFunlitElement extends FunlitElement {
+		static tagName = tagName;
+
+		constructor() {
+			super(init);
+		}
+	}
+
+	Object.defineProperty(CustomFunlitElement, 'name', {
+		value: `${pascalify(tagName)}Element`,
+	});
+
+	return /** @type {FunlitElementConstructor<T>} */ (CustomFunlitElement);
 }
 
 /**
