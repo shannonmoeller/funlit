@@ -27,8 +27,8 @@ $ npm install funlit lit-html
 <script type="module">
   import { define, attr, html } from 'funlit';
 
-  function MyStepper() {
-    const count = attr('count', 0, { parse: Number });
+  function MyStepper(host) {
+    const count = attr(host, 'count', 0, { parse: Number });
 
     function decrement() {
       count.value--;

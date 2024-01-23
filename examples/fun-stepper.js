@@ -1,7 +1,12 @@
 import { define, attr, html } from 'funlit';
 
-define('fun-stepper', () => {
-	const count = attr('count', 20, { parse: Number });
+/**
+ * @type {import('funlit').FunlitElementConstructor<{
+ *   count: number;
+ * }>}
+ */
+export const FunStepperElement = define('fun-stepper', (host) => {
+	const count = attr(host, 'count', 20, { parse: Number });
 
 	function decrement() {
 		count.value--;

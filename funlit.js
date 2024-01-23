@@ -17,43 +17,67 @@ export {
 };
 
 /**
- * @callback Renderer
- * @returns {import('lit-html').TemplateResult}
+ * @typedef {import('lit-html').TemplateResult} TemplateResult
  */
 
 /**
- * @callback Init
- * @param {FunlitElement} host
- * @returns {Renderer | null | undefined}
+ * @template {object} T
+ * @typedef {FunlitElement<T> & T} FunlitElementInstance
  */
 
 /**
- * @typedef Updateable
- * @prop {() => void} update
+ * @template {object} T
+ * @typedef {{ new(): FunlitElementInstance<T> }} FunlitElementConstructor
  */
 
 /**
- * @template V
+ * @typedef {(() => TemplateResult) | null | undefined} Renderer
+ */
+
+/**
+ * @template {object} T
+ * @typedef {(host: FunlitElementInstance<T>) => Renderer} Init
+ */
+
+/**
+ * @template T
  * @typedef {object} ValueRef
- * @prop {V} value
- * @prop {() => string} toString
+ * @property {T} value
+ * @property {() => string} toString
  */
 
-/** @type {(HTMLElement & Updateable) | null} */
-let currentHost = null;
+/**
+ * @template T
+ * @param {unknown} value
+ */
+function unsafeCast(value) {
+	return /** @type {T} */ (value);
+}
 
+/**
+ * @abstract
+ * @template {object} T
+ */
 export class FunlitElement extends HTMLElement {
-	/** @type {Init | null} */
-	init = null;
+	/** @type {Init<T> | null} */
+	#init = null;
 
 	/** @type {boolean} */
 	#isInitialized = false;
 
-	/** @type {Renderer | null | undefined} */
+	/** @type {Renderer | null} */
 	#render = null;
 
 	/** @type {Promise<void> | null} */
 	updateComplete = null;
+
+	/**
+	 * @param {Init<T>} init
+	 */
+	constructor(init) {
+		super();
+		this.#init = init;
+	}
 
 	adoptedCallback() {
 		this.dispatchEvent(new CustomEvent('adopt'));
@@ -63,12 +87,8 @@ export class FunlitElement extends HTMLElement {
 		if (!this.isConnected) return;
 
 		if (!this.#isInitialized) {
-			const unsetHost = setHost(this);
-
-			this.#render = this.init?.(this);
+			this.#render = this.#init?.(unsafeCast(this)) ?? null;
 			this.#isInitialized = true;
-
-			unsetHost();
 		}
 
 		this.update();
@@ -91,41 +111,44 @@ export class FunlitElement extends HTMLElement {
 }
 
 /**
- * @param {string} tag
- * @param {Init} init
+ * @template {object} T
+ * @param {string} tagName
+ * @param {Init<T>} init
  */
-export function defineElement(tag, init) {
+export function defineElement(tagName, init) {
+	/** @extends {FunlitElement<T>} */
 	class CustomFunlitElement extends FunlitElement {
-		init = init;
+		constructor() {
+			super(init);
+		}
 	}
 
 	Object.defineProperty(CustomFunlitElement, 'name', {
-		value: `${pascalify(tag)}Element`,
+		value: `${pascalify(tagName)}Element`,
 	});
 
-	customElements.define(tag, CustomFunlitElement);
+	customElements.define(tagName, CustomFunlitElement);
 
-	return CustomFunlitElement;
+	return /** @type {FunlitElementConstructor<T>} */ (CustomFunlitElement);
 }
 
 /**
- * @template V
- * @template {string} K
+ * @template {Exclude<keyof T, symbol | number>} K
+ * @template {object} T
+ * @param {FunlitElementInstance<T>} host
  * @param {K} key
- * @param {V} value
+ * @param {T[K]} value
  * @param {object} [options]
  * @param {string} [options.attribute]
  * @param {boolean} [options.boolean]
- * @param {HTMLElement & Updateable} [options.host]
- * @param {(value: string) => V} [options.parse]
- * @param {(value: V) => string} [options.stringify]
- * @returns {ValueRef<V>}
+ * @param {(value: string) => T[K]} [options.parse]
+ * @param {(value: T[K]) => string} [options.stringify]
+ * @returns {ValueRef<T[K]>}
  */
-export function defineAttribute(key, value, options = {}) {
+export function defineAttribute(host, key, value, options = {}) {
 	const {
 		attribute = hyphenify(key),
 		boolean = false,
-		host = getHost(),
 		parse = String,
 	} = options;
 
@@ -139,62 +162,58 @@ export function defineAttribute(key, value, options = {}) {
 	});
 
 	if (key in host) {
-		// @ts-expect-error: This is fine.
 		value = host[key];
 	} else if (host.hasAttribute(attribute)) {
 		// @ts-expect-error: This is fine.
 		value = boolean ? true : parse(host.getAttribute(attribute) ?? '');
 	}
 
-	return createProperty(key, value, options);
+	return createProperty(host, key, value, options);
 }
 
 /**
- * @template V
- * @template {string} K
+ * @template {Exclude<keyof T, symbol | number>} K
+ * @template {object} T
+ * @param {FunlitElementInstance<T>} host
  * @param {K} key
- * @param {V} value
+ * @param {T[K]} value
  * @param {object} [options]
- * @param {Updateable} [options.host]
- * @param {(value: V) => string} [options.stringify]
- * @returns {ValueRef<V>}
+ * @param {(value: T[K]) => string} [options.stringify]
+ * @returns {ValueRef<T[K]>}
  */
-export function defineProperty(key, value, options = {}) {
-	const { host = getHost() } = options;
-
+export function defineProperty(host, key, value, options = {}) {
 	if (key in host) {
-		// @ts-expect-error: This is fine.
 		value = host[key];
 	}
 
-	return createProperty(key, value, options);
+	return createProperty(host, key, value, options);
 }
 
 /**
  * @template V
+ * @template {object} T
+ * @param {FunlitElementInstance<T>} host
  * @param {V} value
  * @param {object} [options]
- * @param {Updateable} [options.host]
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-export function defineValue(value, options = {}) {
-	return createValue(value, options);
+export function defineValue(host, value, options = {}) {
+	return createValue(host, value, options);
 }
 
 /**
- * @template V
- * @template {string} K
+ * @template {Exclude<keyof T, symbol | number>} K
+ * @template {object} T
+ * @param {FunlitElementInstance<T>} host
  * @param {K} key
- * @param {V} value
+ * @param {T[K]} value
  * @param {object} [options]
- * @param {Updateable} [options.host]
- * @param {(value: V) => string} [options.stringify]
- * @returns {ValueRef<V>}
+ * @param {(value: T[K]) => string} [options.stringify]
+ * @returns {ValueRef<T[K]>}
  */
-export function createProperty(key, value, options = {}) {
-	const { host = getHost() } = options;
-	const ref = createValue(value, options);
+export function createProperty(host, key, value, options = {}) {
+	const ref = createValue(host, value, options);
 
 	Object.defineProperty(host, key, {
 		configurable: false,
@@ -212,14 +231,15 @@ export function createProperty(key, value, options = {}) {
 
 /**
  * @template V
+ * @template {object} T
+ * @param {FunlitElementInstance<T>} host
  * @param {V} value
  * @param {object} [options]
- * @param {Updateable} [options.host]
  * @param {(value: V) => string} [options.stringify]
  * @returns {ValueRef<V>}
  */
-export function createValue(value, options = {}) {
-	const { host = getHost(), stringify = String } = options;
+export function createValue(host, value, options = {}) {
+	const { stringify = String } = options;
 
 	return {
 		get value() {
@@ -237,35 +257,50 @@ export function createValue(value, options = {}) {
 	};
 }
 
-export function getHost() {
-	if (!currentHost) throw new Error('Missing host.');
-
-	return currentHost;
-}
-
 /**
- * @param {HTMLElement & Updateable} host
- */
-export function setHost(host) {
-	if (currentHost) throw new Error('Existing host.');
-
-	currentHost = host;
-
-	return () => {
-		currentHost = null;
-	};
-}
-
-/**
- * @param {string} value
+ * @param {string | null | undefined} value
  */
 function hyphenify(value) {
-	return value.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`);
+	return value?.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`) ?? '';
 }
 
 /**
- * @param {string} value
+ * @param {string | null | undefined} value
  */
 function pascalify(value) {
-	return value.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase());
+	return value?.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase()) ?? '';
 }
+
+/**
+ * @type {FunlitElementConstructor<{
+ *   foo: number;
+ *   bar: string | null
+ * }>}
+ */
+const FooBarElement = defineElement('foo-bar', (host) => {
+	const foo = defineAttribute(host, 'foo', 123);
+	const bar = defineProperty(host, 'bar', null);
+	const baz = defineValue(host, true);
+
+	console.log(host.foo);
+	console.log(foo.value);
+	console.log(host.bar);
+	console.log(bar.value);
+	console.log(baz.value);
+
+	return () => html``;
+});
+
+const a = new FooBarElement();
+
+console.log(a.foo);
+console.log(a.bar);
+console.log(a.update);
+
+const b = /** @type {InstanceType<typeof FooBarElement>} */ (
+	document.createElement('foo-bar')
+);
+
+console.log(b.foo);
+console.log(b.bar);
+console.log(b.update);

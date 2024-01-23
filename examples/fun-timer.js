@@ -1,9 +1,14 @@
 import { define, attr, val, html } from 'funlit';
 
-define('fun-timer', (host) => {
-	const duration = attr('duration', 20, { parse: Number });
-	const time = val(0);
-	const prev = val(0);
+/**
+ * @type {import('funlit').FunlitElementConstructor<{
+ *   duration: number;
+ * }>}
+ */
+export const FunTimerElement = define('fun-timer', (host) => {
+	const duration = attr(host, 'duration', 20, { parse: Number });
+	const time = val(host, 0);
+	const prev = val(host, 0);
 
 	function play() {
 		prev.value = performance.now();
