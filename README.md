@@ -122,7 +122,7 @@ define('my-element', (host) => {
     // after render
   }
 
-  host.addEventListener('update', () => {
+  host.addEventListener('update', async () => {
     // before render
     await host.updateCompleted;
     // after render
