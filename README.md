@@ -69,58 +69,72 @@ This package reexports `html`, `svg`, and `nothing` from [lit-html](https://npm.
 
 Alias: `defineElement`
 
-TODO
+TODO: document api and return value
 
-### attr(key[, value[, options]])
+### attr(host, key[, value[, options]])
 
 Alias: `defineAttribute`
 
-TODO
+TODO: document api and return value
 
-### prop(key[, value[, options]])
+### prop(host, key[, value[, options]])
 
 Alias: `defineProperty`
 
-TODO
+TODO: document api and return value
 
-### val([value[, options]])
+### val(host, value[, options])
 
 Alias: `defineValue`
 
-TODO
+TODO: document api and return value
 
-## Lifecycle
+## Host
 
 ### init(host)
 
-To define an element you specify a tag name and an `init` function. The `init` function is called once per instance of the element (the first time the element is connected) with a reference to the element. [Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitte non-bubbling `adopt`, `connect`, and `disconnect` events, as well as an `update` event for each render.
+To define an element you specify a tag name and an `init` function. The `init` function is called once per instance of the element (the first time the element is connected) with a reference to the element.
+
+### Lifecycle callbacks
+
+[Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitted as non-bubbling `adopt`, `connect`, and `disconnect` events. There is no `attributechange` event emitted as attribute changes are handled with [`attr()`](#attrhost-key-value-options).
 
 ```js
-define('my-thing', (host) => {
-  host.addEventListener('adopt', () => {});
-  host.addEventListener('connect', () => {});
-  host.addEventListener('disconnect', () => {});
-  host.addEventListener('update', () => {});
+define('my-element', (host) => {
+  host.addEventListener('adopt', () => { /* ... */ });
+  host.addEventListener('connect', () => { /* ... */ });
+  host.addEventListener('disconnect', () => { /* ... */ });
+  host.addEventListener('update', () => { /* ... */ });
 });
 ```
 
-### host.update()
+### host.update(), host.updateComplete
 
-The `update` method is automatically called any time a defined attribute, property, or value changes and may also be called directly. Updates are batched so it's safe to update any number of values at a time without causing unnecessary rerenders. Returns a promise that resolves after the resulting rerender happens.
+The `.update()` method is automatically called any time the element is connected or a defined attribute, property, or value changes, but may also be called directly. Updates are batched so it's safe to trigger any number of updates at a time without causing unnecessary rerenders. Returns a promise that resolves after the resulting rerender happens and will trigger a non-bubbling `update` event.
 
-### host.updateComplete
-
-The same promise as is returned by `.update()`. A new promise is created per update-render cycle.
+The `connect` and `update` event handlers may make use of `host.updateComplete` to run code before or after a render.
 
 ```js
-define('my-thing', (host) => {
-  host.addEventListener('update', async () => {
+define('my-element', (host) => {
+  async function refresh() {
     // before render
-    await this.updateComplete;
+    await host.update();
+    // after render
+  }
+
+  host.addEventListener('update', () => {
+    // before render
+    await host.updateCompleted;
     // after render
   });
+
+  return () => html`
+    {new Date()}
+    <button @click=${refresh}>Refresh</button>
+  `;
 });
 ```
+
 ----
 
 MIT © [Shannon Moeller](http://shannonmoeller.com)

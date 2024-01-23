@@ -1,12 +1,12 @@
 import { define, attr, prop, val, html } from '../funlit.js';
-import type { FunlitElementInstance } from '../funlit.js';
 
-type FunTypesElementInstance = FunlitElementInstance<{
-	foo: number;
-	bar: string | null;
-}>;
-
-function FunTypes(host: FunTypesElementInstance) {
+/**
+ * @param {import('../funlit.js').FunlitElementInstance<{
+ *   foo: number;
+ *   bar: string | null;
+ * }>} host
+ */
+function FunTypes(host) {
 	const foo = attr(host, 'foo', 123, { parse: Number });
 	const bar = prop(host, 'bar', 'abc');
 	const baz = val(host, true);
@@ -28,12 +28,6 @@ function FunTypes(host: FunTypesElementInstance) {
 
 export const FunTypesElement = define('fun-types', FunTypes);
 
-declare global {
-	interface HTMLElementTagNameMap {
-		'fun-types': FunTypesElementInstance;
-	}
-}
-
 const a = new FunTypesElement();
 
 console.log(a.foo);
@@ -48,10 +42,13 @@ console.log(b.update);
 
 ///////////////////////////////////////////////////////////////////////////////
 
-export const FunTypesTwoElement = define<{
-	foo: number;
-	bar: string | null;
-}>('fun-types-two', (host) => {
+/**
+ * @type {import('../funlit.js').FunlitElementConstructor<{
+ *   foo: number;
+ *   bar: string | null;
+ * }>}
+ */
+export const FunTypesTwoElement = define('fun-types-two', (host) => {
 	const foo = attr(host, 'foo', 123, { parse: Number });
 	const bar = prop(host, 'bar', 'abc');
 	const baz = val(host, true);
@@ -70,12 +67,6 @@ export const FunTypesTwoElement = define<{
 		<div>baz: ${baz}</div>
 	`;
 });
-
-declare global {
-	interface HTMLElementTagNameMap {
-		'fun-types-two': InstanceType<typeof FunTypesTwoElement>;
-	}
-}
 
 const c = new FunTypesTwoElement();
 
