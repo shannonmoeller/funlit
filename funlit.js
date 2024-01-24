@@ -46,6 +46,8 @@ export {
  * @property {() => string} toString
  */
 
+const propertyCache = new WeakMap();
+
 /**
  * @template T
  * @param {unknown} value
@@ -87,6 +89,7 @@ export class FunlitElement extends HTMLElement {
 		if (!this.isConnected) return;
 
 		if (!this.#isInitialized) {
+			propertyCache.set(this, new Map());
 			this.#render = this.#init?.(unsafeCast(this)) ?? null;
 			this.#isInitialized = true;
 		}
@@ -137,6 +140,10 @@ export function defineElement(tagName, init) {
  * @returns {ValueRef<T[K]>}
  */
 export function defineAttribute(host, key, value, options = {}) {
+	if (propertyCache.get(host).has(key)) {
+		return propertyCache.get(host).get(key);
+	}
+
 	const {
 		attribute = hyphenify(key),
 		boolean = false,
@@ -173,6 +180,10 @@ export function defineAttribute(host, key, value, options = {}) {
  * @returns {ValueRef<T[K]>}
  */
 export function defineProperty(host, key, value, options = {}) {
+	if (propertyCache.get(host).has(key)) {
+		return propertyCache.get(host).get(key);
+	}
+
 	if (key in host) {
 		value = host[key];
 	}
@@ -226,6 +237,10 @@ export function createElement(tagName, init) {
  * @returns {ValueRef<T[K]>}
  */
 export function createProperty(host, key, value, options = {}) {
+	if (propertyCache.get(host).has(key)) {
+		return propertyCache.get(host).get(key);
+	}
+
 	const ref = createValue(host, value, options);
 
 	Object.defineProperty(host, key, {
@@ -238,6 +253,8 @@ export function createProperty(host, key, value, options = {}) {
 			ref.value = next;
 		},
 	});
+
+	propertyCache.get(host).set(key, ref);
 
 	return ref;
 }
