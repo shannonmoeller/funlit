@@ -240,7 +240,7 @@ define('my-counter', (host) => {
 
 ### Lifecycle callbacks
 
-[Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitted as non-bubbling `adopt`, `connect`, and `disconnect` events. There is no `attributechange` event emitted as attribute changes are handled with [`attr()`](#attrhost-key-value-options).
+[Native lifecycle callbacks](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#custom_element_lifecycle_callbacks) are emitted as non-bubbling `adopt`, `connect`, and `disconnect` events. There is no `attributechange` event emitted as attribute changes are handled with [`attr()`](#attrhost-key-value-options) and cannot be defined using the `observedAttributes` property.
 
 ```js
 define('my-element', (host) => {
