@@ -303,7 +303,7 @@ export const FunTypesElement = define<{
 
   console.log(foo.value); // number
   console.log(bar.value); // string
-  console.log(foo.value); // boolean
+  console.log(baz.value); // boolean
 
   return () => html`
     <div>foo: ${foo}</div>
