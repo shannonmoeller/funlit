@@ -294,24 +294,24 @@ You can define elements using TypeScript, if you're into that sort of thing.
 import { define, attr, prop, val, html } from 'funlit';
 
 export const FunTypesElement = define<{
-	foo: number;
-	bar: string;
+  foo: number;
+  bar: string;
 }>('fun-types', (host) => {
-	const foo = attr(host, 'foo', 123, { parse: Number });
-	const bar = prop(host, 'bar', 'abc');
-	const baz = val(host, true);
+  const foo = attr(host, 'foo', 123, { parse: Number });
+  const bar = prop(host, 'bar', 'abc');
+  const baz = val(host, true);
 
-	return () => html`
-		<div>foo: ${foo}</div>
-		<div>bar: ${bar}</div>
-		<div>baz: ${baz}</div>
-	`;
+  return () => html`
+    <div>foo: ${foo}</div>
+    <div>bar: ${bar}</div>
+    <div>baz: ${baz}</div>
+  `;
 });
 
 declare global {
-	interface HTMLElementTagNameMap {
-		'fun-types': InstanceType<typeof FunTypesElement>;
-	}
+  interface HTMLElementTagNameMap {
+    'fun-types': InstanceType<typeof FunTypesElement>;
+  }
 }
 
 const a = new FunTypesElement();
