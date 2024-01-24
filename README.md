@@ -221,7 +221,7 @@ document.body.append(counter);
 Alias: `defineValue`
 
 - `host` `{FunlitElement}` Host element.
-- `value` `{any}` (default: `null`) Optional initial value of the property.
+- `value` `{any}` (default: `undefined`) Optional initial value of the property.
 - `options` `{object}` (default: `{}`)
   - `stringify` `{(value) => string}` Optional function to stringify the value for rendering.
 
@@ -306,21 +306,28 @@ export const FunTypesElement = define<{
 }>('fun-types', (host) => {
   // must be a number
   const foo = attr(host, 'foo', 123, { parse: Number });
+
   // must be a string
   const bar = prop(host, 'bar', 'abc');
-  // infers a boolean, or specify with `val<type><host, thing>`
+
+  // infers a boolean
   const baz = val(host, true);
+
+  // could be a bigint later
+  const big = val<bigint | undefined>(host);
 
   host.doSomething = () => { /* ... */ };
 
   console.log(foo.value); // number
   console.log(bar.value); // string
   console.log(baz.value); // boolean
+  console.log(big.value); // bigint | undefined
 
   return () => html`
     <div>foo: ${foo}</div>
     <div>bar: ${bar}</div>
     <div>baz: ${baz}</div>
+    <div>big: ${big}</div>
   `;
 });
 
