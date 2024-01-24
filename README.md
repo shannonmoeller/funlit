@@ -74,7 +74,9 @@ Alias: `defineElement`
 
 Returns: `{FunlitElementConstructor}`
 
-Defines a new custom element with the given tag name. The `init` function is called once per instance of the element (the [host](#host)) the first time the element is connected. The function is passed a reference to the host which can be used to define attributes, properties, and values, as well as anything else you'd like. You can think of `init` like the constuctor, but it doesn't run until the element has been added to a document. Returns the newly-created custom-element class.
+Defines a new custom element with the given tag name and `init` function. Returns the newly-created custom-element class.
+
+The `init` function is only called once per instance of the element (the [host](#host)) the first time the element is connected. The function is passed a reference to the host which can be used to define attributes, properties, and values, as well as anything else you'd like. You can think of `init` like the constuctor, but it doesn't run until the element has been added to a document. Returns a render function which will be called on every update-render cycle.
 
 ```js
 const MyCounterElement = define('my-counter', (host) => {
@@ -130,7 +132,7 @@ Alias: `defineAttribute`
 
 Returns: `{{ value, toString: () => string }}`
 
-Defines a new property on the host. Any change to the property will trigger an update-render cycle. The property is initialized with and will watch for changes to the related attribute's value. Changes to the property will not be reflected back to the DOM; this is intentional for performance and security. Returns a mutable value ref.
+Defines a new property on the host. Any change to the property will trigger an update-render cycle. The property is initialized with and will watch for changes to the related attribute's value. Changes to the property will not be reflected back to the DOM (this is intentional for performance and security). Returns a mutable value ref.
 
 ```js
 define('my-counter', (host) => {
@@ -253,7 +255,7 @@ define('my-element', (host) => {
 
 ### host.update(), host.updateComplete
 
-The `.update()` method is automatically called any time the element is connected or a defined attribute, property, or value changes, but may also be called directly. Updates are batched so it's safe to trigger any number of updates at a time without causing unnecessary rerenders. Returns a promise that resolves after the resulting rerender happens and will trigger a non-bubbling `update` event.
+The `.update()` method is automatically called any time the element is connected or a defined attribute, property, or value changes, but may also be called directly. Updates are batched so it's safe to trigger any number of updates at a time without causing unnecessary rerenders. Will trigger a non-bubbling `update` event. Returns a promise that resolves after the resulting rerender happens.
 
 The `connect` and `update` event handlers may make use of `host.updateComplete` to run code before or after a render.
 
@@ -264,6 +266,12 @@ define('my-element', (host) => {
     await host.update();
     // after render
   }
+
+  host.addEventListener('connect', async () => {
+    // before render
+    await host.updateCompleted;
+    // after render
+  });
 
   host.addEventListener('update', async () => {
     // before render
@@ -276,6 +284,47 @@ define('my-element', (host) => {
     <button @click=${refresh}>Refresh</button>
   `;
 });
+```
+
+## TypeScript
+
+You can define elements using TypeScript, if you're into that sort of thing.
+
+```typescript
+import { define, attr, prop, val, html } from 'funlit';
+
+export const FunTypesElement = define<{
+	foo: number;
+	bar: string;
+}>('fun-types', (host) => {
+	const foo = attr(host, 'foo', 123, { parse: Number });
+	const bar = prop(host, 'bar', 'abc');
+	const baz = val(host, true);
+
+	return () => html`
+		<div>foo: ${foo}</div>
+		<div>bar: ${bar}</div>
+		<div>baz: ${baz}</div>
+	`;
+});
+
+declare global {
+	interface HTMLElementTagNameMap {
+		'fun-types': InstanceType<typeof FunTypesElement>;
+	}
+}
+
+const a = new FunTypesElement();
+
+console.log(a.foo);
+console.log(a.bar);
+console.log(a.update);
+
+const b = document.createElement('fun-types');
+
+console.log(b.foo);
+console.log(b.bar);
+console.log(b.update);
 ```
 
 ----
