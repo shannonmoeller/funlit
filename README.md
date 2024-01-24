@@ -69,8 +69,8 @@ This package reexports `html`, `svg`, and `nothing` from [lit-html](https://npm.
 
 Alias: `defineElement`
 
-- `tagName` `{string}` The Custom Element tag name to register.
-- `init` `{(FunlitElement) => () => TemplateResult}` An initialization function that receives this host element instance, implements core features, and returns a renderer function.
+- `tagName` `{string}` Custom-element tag name to register.
+- `init` `{(FunlitElement) => () => TemplateResult}` An initialization function that receives a host element instance, implements core features, and returns a renderer function.
 
 Returns: `{FunlitElementConstructor}`
 
@@ -215,7 +215,7 @@ Alias: `defineValue`
 - `host` `{FunlitElement}` Host element.
 - `value` `{any}` (default: `null`) Optional initial value of the property.
 - `options` `{object}`
-  - `stringify` `{(value) => string}` Optional function to stringify the property value for rendering.
+  - `stringify` `{(value) => string}` Optional function to stringify the value for rendering.
 
 Returns: `{{ value, toString: () => string }}`
 
