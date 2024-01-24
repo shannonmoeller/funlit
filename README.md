@@ -301,6 +301,10 @@ export const FunTypesElement = define<{
   const bar = prop(host, 'bar', 'abc');
   const baz = val(host, true);
 
+  console.log(foo.value); // number
+  console.log(bar.value); // string
+  console.log(foo.value); // boolean
+
   return () => html`
     <div>foo: ${foo}</div>
     <div>bar: ${bar}</div>
@@ -316,15 +320,15 @@ declare global {
 
 const a = new FunTypesElement();
 
-console.log(a.foo);
-console.log(a.bar);
-console.log(a.update);
+console.log(a.foo); // number
+console.log(a.bar); // string
+console.log(a.update); // function
 
 const b = document.createElement('fun-types');
 
-console.log(b.foo);
-console.log(b.bar);
-console.log(b.update);
+console.log(b.foo); // number
+console.log(b.bar); // string
+console.log(b.update); // function
 ```
 
 ----
