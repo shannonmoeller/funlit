@@ -46,7 +46,7 @@ export {
  * @property {() => string} toString
  */
 
-const propertyCache = new WeakMap();
+const refCache = new WeakMap();
 
 /**
  * @template T
@@ -89,7 +89,8 @@ export class FunlitElement extends HTMLElement {
 		if (!this.isConnected) return;
 
 		if (!this.#isInitialized) {
-			propertyCache.set(this, new Map());
+			refCache.set(this, new Map());
+
 			this.#render = this.#init?.(unsafeCast(this)) ?? null;
 			this.#isInitialized = true;
 		}
@@ -108,7 +109,12 @@ export class FunlitElement extends HTMLElement {
 		return (this.updateComplete ??= Promise.resolve().then(() => {
 			this.dispatchEvent(new CustomEvent('update'));
 			this.updateComplete = null;
-			render(this.#render?.(), this.shadowRoot || this);
+
+			const result = this.#render?.();
+
+			if (result !== undefined) {
+				render(result, this.shadowRoot || this);
+			}
 		}));
 	};
 }
@@ -140,8 +146,8 @@ export function defineElement(tagName, init) {
  * @returns {ValueRef<T[K]>}
  */
 export function defineAttribute(host, key, value, options = {}) {
-	if (propertyCache.get(host).has(key)) {
-		return propertyCache.get(host).get(key);
+	if (refCache.get(host).has(key)) {
+		return refCache.get(host).get(key);
 	}
 
 	const {
@@ -151,10 +157,11 @@ export function defineAttribute(host, key, value, options = {}) {
 	} = options;
 
 	new MutationObserver(() => {
-		// @ts-expect-error: This is fine.
-		host[key] = boolean
-			? host.hasAttribute(attribute)
-			: parse(host.getAttribute(attribute) ?? '');
+		host[key] = unsafeCast(
+			boolean
+				? host.hasAttribute(attribute)
+				: parse(host.getAttribute(attribute) ?? ''),
+		);
 	}).observe(host, {
 		attributeFilter: [attribute],
 	});
@@ -162,8 +169,9 @@ export function defineAttribute(host, key, value, options = {}) {
 	if (key in host) {
 		value = host[key];
 	} else if (host.hasAttribute(attribute)) {
-		// @ts-expect-error: This is fine.
-		value = boolean ? true : parse(host.getAttribute(attribute) ?? '');
+		value = unsafeCast(
+			boolean ? true : parse(host.getAttribute(attribute) ?? ''),
+		);
 	}
 
 	return createProperty(host, key, value, options);
@@ -180,8 +188,8 @@ export function defineAttribute(host, key, value, options = {}) {
  * @returns {ValueRef<T[K]>}
  */
 export function defineProperty(host, key, value, options = {}) {
-	if (propertyCache.get(host).has(key)) {
-		return propertyCache.get(host).get(key);
+	if (refCache.get(host).has(key)) {
+		return refCache.get(host).get(key);
 	}
 
 	if (key in host) {
@@ -237,8 +245,8 @@ export function createElement(tagName, init) {
  * @returns {ValueRef<T[K]>}
  */
 export function createProperty(host, key, value, options = {}) {
-	if (propertyCache.get(host).has(key)) {
-		return propertyCache.get(host).get(key);
+	if (refCache.get(host).has(key)) {
+		return refCache.get(host).get(key);
 	}
 
 	const ref = createValue(host, value, options);
@@ -254,7 +262,7 @@ export function createProperty(host, key, value, options = {}) {
 		},
 	});
 
-	propertyCache.get(host).set(key, ref);
+	refCache.get(host).set(key, ref);
 
 	return ref;
 }
