@@ -5,11 +5,18 @@
 <title>funlit - test</title>
 
 <style>
+	:root {
+		--accentColor: color-mix(in lab, canvastext 15%, orange);
+		--accentBackground: color-mix(in lab, var(--accentColor) 15%, transparent);
+	}
+
 	* {
 		box-sizing: border-box;
-		border: unset;
 		margin: unset;
 		padding: unset;
+		border: unset;
+		outline: unset;
+		background: unset;
 		color: inherit;
 		font: inherit;
 	}
@@ -27,7 +34,7 @@
 	}
 
 	a {
-		color: orange;
+		color: var(--accentColor);
 		text-decoration: none;
 	}
 
@@ -37,10 +44,17 @@
 
 	button {
 		border-radius: 3em;
+		background-color: var(--accentBackground);
+		color: var(--accentColor);
 		cursor: pointer;
 		touch-action: manipulation;
 		-webkit-user-select: none;
 		user-select: none;
+	}
+
+	button:focus-visible {
+		outline: 2px solid;
+		outline-offset: 2px;
 	}
 </style>
 
