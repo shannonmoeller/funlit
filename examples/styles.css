@@ -2,8 +2,9 @@
   color-scheme: dark light;
   --background: color-mix(in lab, white 5%, canvas);
   --foreground: color-mix(in lab, white 20%, canvastext);
-  --accentBackground: color-mix(in lab, lime 15%, transparent);
-  --accentForeground: color-mix(in lab, lime 70%, canvastext);
+  --accentBackground: color-mix(in lab, springgreen 15%, transparent);
+  --accentForeground: color-mix(in lab, springgreen 70%, canvastext);
+  --border: hsl(0 0% 50% / 20%);
 }
 
 * {
@@ -41,7 +42,7 @@ a {
   text-decoration: none;
 }
 
-a:is(:hover, :focus-visible) {
+a:is(:active, :hover, :focus-visible) {
   text-decoration: underline;
 }
 
