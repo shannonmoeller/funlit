@@ -1,9 +1,10 @@
 :root {
   color-scheme: dark light;
-  --background: color-mix(in lab, white 5%, canvas);
-  --foreground: color-mix(in lab, white 20%, canvastext);
-  --accentBackground: color-mix(in lab, springgreen 15%, transparent);
-  --accentForeground: color-mix(in lab, springgreen 70%, canvastext);
+  --background: color-mix(in oklab, white 5%, canvas);
+  --foreground: color-mix(in oklab, white 20%, canvastext);
+  --accentBackground: color-mix(in oklab, springgreen 15%, transparent);
+  --accentBlob: color-mix(in oklab, springgreen 5%, transparent);
+  --accentForeground: color-mix(in oklab, springgreen 70%, canvastext);
   --border: hsl(0 0% 50% / 20%);
 }
 
@@ -18,19 +19,16 @@
   font: inherit;
 }
 
-html {
-  accent-color: var(--accentForeground);
-  background-color: var(--background);
-  color: var(--foreground);
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
-}
-
 body {
+  accent-color: var(--accentForeground);
+  background: var(--backround);
+  color: var(--foreground);
   font:
     200 max(16px, 1rem) / 1.5 ui-sans-serif,
     system-ui,
     sans-serif;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
 }
 
 h1 {

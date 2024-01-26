@@ -91,6 +91,13 @@
 <style>
   @import './examples/styles.css';
 
+  body {
+    background:
+      radial-gradient(circle at 100% 0%, var(--accentBlob), var(--background))
+        center / cover fixed,
+      var(--background);
+  }
+
   .app {
     display: flex;
     flex-flow: column;
