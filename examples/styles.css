@@ -1,5 +1,5 @@
 :root {
-  --accentColor: color-mix(in lab, canvastext 15%, orange);
+  --accentColor: color-mix(in lab, canvastext 30%, lime);
   --accentBackground: color-mix(in lab, var(--accentColor) 15%, transparent);
 }
 
@@ -30,6 +30,7 @@ body {
 
 h1 {
   font-size: 2rem;
+  font-weight: 800;
   line-height: 1;
 }
 
