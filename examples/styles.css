@@ -3,7 +3,7 @@
   --background: color-mix(in oklab, white 5%, canvas);
   --foreground: color-mix(in oklab, white 20%, canvastext);
   --accentBackground: color-mix(in oklab, springgreen 15%, transparent);
-  --accentBlob: color-mix(in oklab, springgreen 5%, transparent);
+  --accentBlob: color-mix(in oklab, springgreen 10%, transparent);
   --accentForeground: color-mix(in oklab, springgreen 70%, canvastext);
   --border: hsl(0 0% 50% / 20%);
 }
@@ -49,7 +49,7 @@ a:is(:active, :hover, :focus-visible) {
 
 button {
   border-radius: 3em;
-  background-color: var(--accentBackground);
+  background: var(--accentBackground);
   color: var(--accentForeground);
   cursor: pointer;
   touch-action: manipulation;
