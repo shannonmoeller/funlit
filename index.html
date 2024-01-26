@@ -47,7 +47,7 @@
       `;
     }
 
-    function handleEditorInput(event) {
+    function handleEdit(event) {
       if (!(event.target instanceof HTMLTextAreaElement)) return;
 
       updatePreview(event.target.value);
@@ -71,10 +71,7 @@
     });
 
     return () => html`
-      <textarea
-        behavior="editor"
-        @input=${debounce(handleEditorInput)}
-      ></textarea>
+      <textarea behavior="editor" @input=${debounce(handleEdit)}></textarea>
       <iframe behavior="preview" srcdoc=""></iframe>
     `;
   });
