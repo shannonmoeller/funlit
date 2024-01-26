@@ -10,7 +10,7 @@
 <script id="importMap" type="importmap">
   {
     "imports": {
-      "funlit": "./funlit.js",
+      "funlit": "https://unpkg.com/funlit",
       "lit-html": "https://unpkg.com/lit-html"
     }
   }
@@ -19,14 +19,14 @@
 <script type="module">
   import { define, html } from 'funlit';
 
-  const importMap = document.getElementById('importMap');
+  const importMap = document.getElementById('importMap').textContent;
 
-  function debounce(fn) {
+  function debounce(fn, ms = 500) {
     let id = -1;
 
     return (...args) => {
       clearTimeout(id);
-      id = setTimeout(() => fn(...args), 500);
+      id = setTimeout(() => fn(...args), ms);
     };
   }
 
@@ -39,9 +39,12 @@
 
       preview.srcdoc = `<!doctype html>
         <meta charset="utf8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1"
+        />
         <title></title>
-        <script type="importmap">${importMap.textContent}<${''}/script>
+        <script type="importmap">${importMap}${'</'}script>
         <style>@import './examples/styles.css';</style>
         ${content}
       `;
@@ -63,16 +66,16 @@
 
       await host.updateComplete;
 
-      editor = host.querySelector('[behavior="editor"]');
-      preview = host.querySelector('[behavior="preview"]');
+      editor = host.querySelector('textarea');
+      preview = host.querySelector('iframe');
 
       editor.value = data.trim();
       updatePreview(data.trim());
     });
 
     return () => html`
-      <textarea behavior="editor" @input=${debounce(handleEdit)}></textarea>
-      <iframe behavior="preview" srcdoc=""></iframe>
+      <textarea @input=${debounce(handleEdit)}></textarea>
+      <iframe sandbox="allow-scripts" srcdoc=""></iframe>
     `;
   });
 </script>
