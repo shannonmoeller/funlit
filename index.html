@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf8" />
     <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1"
-    />
-    <meta
       name="description"
       content="Magicless function Lit elements with reactive attributes, properties, and values."
+    />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1"
     />
     <link
       rel="icon"
@@ -62,8 +62,13 @@
             <meta charset="utf8" />
             <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
             <title></title>
-            <script type="importmap">${importMap}${'</'}script>
-            <style>@import './examples/styles.css';</style>
+            <script type="importmap">
+              ${importMap}
+            ${'</'}script>
+            <style>
+              @import './examples/styles.css';
+              body { background: transparent; }
+            </style>
             ${content}
           `;
         }

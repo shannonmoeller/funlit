@@ -19,7 +19,8 @@ Browsers:
   {
     "imports": {
       "funlit": "https://unpkg.com/funlit",
-      "lit-html": "https://unpkg.com/lit-html"
+      "lit-html": "https://unpkg.com/lit-html",
+      "lit-html/": "https://unpkg.com/lit-html/"
     }
   }
 </script>
