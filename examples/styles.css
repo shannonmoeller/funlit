@@ -1,6 +1,9 @@
 :root {
-  --accentColor: color-mix(in lab, canvastext 30%, lime);
-  --accentBackground: color-mix(in lab, var(--accentColor) 15%, transparent);
+  color-scheme: dark light;
+  --background: color-mix(in lab, white 5%, canvas);
+  --foreground: color-mix(in lab, white 20%, canvastext);
+  --accentBackground: color-mix(in lab, lime 15%, transparent);
+  --accentForeground: color-mix(in lab, lime 70%, canvastext);
 }
 
 * {
@@ -15,10 +18,9 @@
 }
 
 html {
-  color-scheme: dark light;
-  accent-color: var(--accentColor);
-  background-color: canvas;
-  color: canvastext;
+  accent-color: var(--accentForeground);
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 body {
@@ -35,7 +37,7 @@ h1 {
 }
 
 a {
-  color: var(--accentColor);
+  color: var(--accentForeground);
   text-decoration: none;
 }
 
@@ -46,7 +48,7 @@ a:is(:hover, :focus-visible) {
 button {
   border-radius: 3em;
   background-color: var(--accentBackground);
-  color: var(--accentColor);
+  color: var(--accentForeground);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-user-select: none;
