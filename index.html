@@ -1,200 +1,224 @@
 <!doctype html>
-<meta charset="utf8" />
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1,maximum-scale=1"
-/>
+<html lang="en">
+  <head>
+    <meta charset="utf8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1"
+    />
+    <meta
+      name="description"
+      content="Magicless function Lit elements with reactive attributes, properties, and values."
+    />
 
-<title>funlit</title>
+    <title>funlit</title>
 
-<script id="importMap" type="importmap">
-  {
-    "imports": {
-      "funlit": "https://unpkg.com/funlit",
-      "lit-html": "https://unpkg.com/lit-html",
-      "lit-html/": "https://unpkg.com/lit-html/"
-    }
-  }
-</script>
+    <script id="importMap" type="importmap">
+      {
+        "imports": {
+          "funlit": "https://unpkg.com/funlit",
+          "lit-html": "https://unpkg.com/lit-html",
+          "lit-html/": "https://unpkg.com/lit-html/"
+        }
+      }
+    </script>
 
-<script type="module">
-  import { define, html } from 'funlit';
-  import { createRef, ref } from 'lit-html/directives/ref.js';
+    <script type="module">
+      import { define, html } from 'funlit';
+      import { createRef, ref } from 'lit-html/directives/ref.js';
 
-  const importMap = document.getElementById('importMap').textContent;
+      const importMap = document.getElementById('importMap').textContent;
 
-  function debounce(fn, ms = 300) {
-    let id = -1;
+      function debounce(fn, ms = 300) {
+        let id = -1;
 
-    return (...args) => {
-      clearTimeout(id);
-      id = setTimeout(() => fn(...args), ms);
-    };
-  }
+        return (...args) => {
+          clearTimeout(id);
+          id = setTimeout(() => fn(...args), ms);
+        };
+      }
 
-  define('fun-example', (host) => {
-    let internals = host.attachInternals();
-    let editor = createRef();
-    let preview = createRef();
+      define('fun-example', (host) => {
+        let internals = host.attachInternals();
+        let editor = createRef();
+        let preview = createRef();
 
-    internals.role = 'article';
+        internals.role = 'article';
 
-    function updateEditor(content) {
-      if (!editor.value) return;
+        function updateEditor(content) {
+          if (!editor.value) return;
 
-      editor.value.value = content.trim();
-    }
+          editor.value.value = content.trim();
+        }
 
-    function updatePreview(content) {
-      if (!preview.value) return;
+        function updatePreview(content) {
+          if (!preview.value) return;
 
-      preview.value.srcdoc = `<!doctype html>
-        <meta charset="utf8" />
-        <meta
-          name="viewport"
-          content="width=device-width,initial-scale=1,maximum-scale=1"
-        />
-        <title></title>
-        <script type="importmap">${importMap}${'</'}script>
-        <style>@import './examples/styles.css';</style>
-        ${content}
-      `;
-    }
+          preview.value.srcdoc = `<!doctype html>
+            <meta charset="utf8" />
+            <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+            <title></title>
+            <script type="importmap">${importMap}${'</'}script>
+            <style>@import './examples/styles.css';</style>
+            ${content}
+          `;
+        }
 
-    function handleEditorInput(event) {
-      if (!(event.target instanceof HTMLTextAreaElement)) return;
+        function handleEditorInput(event) {
+          if (!(event.target instanceof HTMLTextAreaElement)) return;
 
-      updatePreview(event.target.value);
-    }
+          updatePreview(event.target.value);
+        }
 
-    host.addEventListener('connect', async () => {
-      const url = new URL(host.getAttribute('src'), location.href);
+        host.addEventListener('connect', async () => {
+          const url = new URL(host.getAttribute('src'), location.href);
 
-      if (url.origin !== location.origin) throw new Error();
+          if (url.origin !== location.origin) throw new Error();
 
-      const request = await fetch(url);
-      const data = await request.text();
+          const request = await fetch(url);
+          const data = await request.text();
 
-      await host.updateComplete;
+          await host.updateComplete;
 
-      updateEditor(data);
-      updatePreview(data);
-    });
+          updateEditor(data);
+          updatePreview(data);
+        });
 
-    return () => html`
-      <textarea @input=${debounce(handleEditorInput)} ${ref(editor)}></textarea>
-      <iframe sandbox="allow-scripts" srcdoc="" ${ref(preview)}></iframe>
-    `;
-  });
-</script>
+        return () => html`
+          <textarea
+            aria-label="editor"
+            @input=${debounce(handleEditorInput)}
+            ${ref(editor)}
+          ></textarea>
+          <iframe
+            sandbox="allow-scripts"
+            srcdoc=""
+            title="preview"
+            ${ref(preview)}
+          ></iframe>
+        `;
+      });
+    </script>
 
-<style>
-  @import './examples/styles.css';
+    <style>
+      @import './examples/styles.css';
 
-  body {
-    background:
-      radial-gradient(circle at 100% 0%, var(--accentBlob), var(--background))
-        center / cover fixed,
-      var(--background);
-  }
+      body {
+        background:
+          radial-gradient(
+              circle at 100% 0%,
+              var(--accentBlob),
+              var(--background)
+            )
+            center / cover fixed,
+          var(--background);
+      }
 
-  .app {
-    display: flex;
-    flex-flow: column;
-    gap: 2rem;
-    padding: 2rem;
-  }
+      .app {
+        display: flex;
+        flex-flow: column;
+        gap: 2rem;
+        padding: 2rem;
+      }
 
-  .app-head {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-  }
+      .app-head {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+      }
 
-  .app-nav {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: baseline;
-    gap: 1rem;
-  }
+      .app-nav {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: baseline;
+        gap: 1rem;
+      }
 
-  .app-body {
-    display: flex;
-    flex-flow: column;
-    gap: 2rem;
-  }
+      .app-body {
+        display: flex;
+        flex-flow: column;
+        gap: 2rem;
+      }
 
-  .app-hero {
-    max-inline-size: 45ch;
-    text-wrap: balance;
-  }
+      .app-hero {
+        max-inline-size: 45ch;
+        text-wrap: balance;
+      }
 
-  .app-legal {
-    padding-block-start: 0.5rem;
-    border-block-start: 1px dashed var(--border);
-    font-size: max(10px, 0.75rem);
-    text-wrap: balance;
-  }
+      .app-legal {
+        padding-block-start: 0.5rem;
+        border-block-start: 1px dashed var(--border);
+        font-size: max(10px, 0.75rem);
+        text-wrap: balance;
+      }
 
-  fun-example {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    grid-auto-rows: min-content;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border);
-    contain: paint;
+      fun-example {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        grid-auto-rows: min-content;
+        min-block-size: 20rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--border);
+        contain: paint;
 
-    & textarea {
-      padding: 1rem;
-      min-block-size: 19rem;
-      font:
-        100 max(10px, 0.66rem) / 1.25 ui-monospace,
-        'Menlo',
-        'Roboto Mono',
-        monospace;
-      resize: vertical;
-      tab-size: 2;
-      white-space: pre;
-    }
+        & textarea {
+          padding: 1rem;
+          block-size: 100%;
+          min-block-size: 20rem;
+          font:
+            100 max(10px, 0.66rem) / 1.25 ui-monospace,
+            'Menlo',
+            'Roboto Mono',
+            monospace;
+          resize: vertical;
+          tab-size: 2;
+          white-space: pre;
+        }
 
-    & iframe {
-      min-block-size: 9rem;
-      block-size: 100%;
-      inline-size: 100%;
-      outline: 1px dashed var(--border);
-    }
-  }
-</style>
+        & iframe {
+          block-size: 100%;
+          min-block-size: 9rem;
+          inline-size: 100%;
+          outline: 1px dashed var(--border);
+        }
+      }
+    </style>
+  </head>
 
-<div class="app">
-  <header class="app-head">
-    <h1>🪵 funlit</h1>
+  <body>
+    <div class="app">
+      <header class="app-head">
+        <h1>🪵 funlit</h1>
 
-    <nav class="app-nav">
-      <a href="https://github.com/shannonmoeller/funlit">Github</a>
-      <a href="https://npm.im/funlit">npm</a>
-    </nav>
-  </header>
+        <nav class="app-nav">
+          <a href="https://github.com/shannonmoeller/funlit">Github</a>
+          <a href="https://npm.im/funlit">npm</a>
+        </nav>
+      </header>
 
-  <main class="app-body">
-    <p class="app-hero">
-      Magicless function <a href="https://npm.im/lit-html">Lit</a> elements with
-      reactive attributes, properties, and values. Light&nbsp;DOM by default for
-      all your progressive-enhancement needs.
-    </p>
-    <fun-example src="./examples/fun-stepper.html"></fun-example>
-    <fun-example src="./examples/fun-timer.html"></fun-example>
-  </main>
+      <main class="app-body">
+        <p class="app-hero">
+          Magicless function <a href="https://npm.im/lit-html">Lit</a> elements
+          with reactive attributes, properties, and values. Light&nbsp;DOM by
+          default for all your progressive-enhancement needs.
+        </p>
+        <fun-example src="./examples/fun-stepper.html"></fun-example>
+        <fun-example src="./examples/fun-timer.html"></fun-example>
+      </main>
 
-  <footer class="app-foot">
-    <p class="app-legal">
-      Copyright © 2024
-      <a href="https://shannonmoeller.com">Shannon Moeller</a>. Licensed under
-      <a href="https://github.com/shannonmoeller/funlit/blob/main/LICENSE.md"
-        >MIT</a
-      >.
-    </p>
-  </footer>
-</div>
+      <footer class="app-foot">
+        <p class="app-legal">
+          Copyright © 2024
+          <a href="https://shannonmoeller.com">Shannon Moeller</a>. Licensed
+          under
+          <a
+            href="https://github.com/shannonmoeller/funlit/blob/main/LICENSE.md"
+            >MIT</a
+          >.
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>
