@@ -75,7 +75,7 @@
 
     return () => html`
       <textarea @input=${debounce(handleEdit)}></textarea>
-      <iframe sandbox="allow-scripts" srcdoc=""></iframe>
+      <iframe sandbox="allow-forms allow-scripts" srcdoc=""></iframe>
     `;
   });
 </script>
