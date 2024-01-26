@@ -40,6 +40,7 @@ h1 {
 
 a {
   color: var(--accentForeground);
+  font-weight: 500;
   text-decoration: none;
 }
 
@@ -52,6 +53,7 @@ button {
   background: var(--accentBackground);
   color: var(--accentForeground);
   cursor: pointer;
+  font-weight: 500;
   touch-action: manipulation;
   -webkit-user-select: none;
   user-select: none;
