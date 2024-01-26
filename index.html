@@ -11,13 +11,15 @@
   {
     "imports": {
       "funlit": "https://unpkg.com/funlit",
-      "lit-html": "https://unpkg.com/lit-html"
+      "lit-html": "https://unpkg.com/lit-html",
+      "lit-html/": "https://unpkg.com/lit-html/"
     }
   }
 </script>
 
 <script type="module">
   import { define, html } from 'funlit';
+  import { createRef, ref } from 'lit-html/directives/ref.js';
 
   const importMap = document.getElementById('importMap').textContent;
 
@@ -31,13 +33,19 @@
   }
 
   define('fun-example', (host) => {
-    let editor;
-    let preview;
+    let editor = createRef();
+    let preview = createRef();
+
+    function updateEditor(content) {
+      if (!editor.value) return;
+
+      editor.value.value = content.trim();
+    }
 
     function updatePreview(content) {
-      if (!preview) return;
+      if (!preview.value) return;
 
-      preview.srcdoc = `<!doctype html>
+      preview.value.srcdoc = `<!doctype html>
         <meta charset="utf8" />
         <meta
           name="viewport"
@@ -50,7 +58,7 @@
       `;
     }
 
-    function handleEdit(event) {
+    function handleEditorInput(event) {
       if (!(event.target instanceof HTMLTextAreaElement)) return;
 
       updatePreview(event.target.value);
@@ -66,16 +74,13 @@
 
       await host.updateComplete;
 
-      editor = host.querySelector('textarea');
-      preview = host.querySelector('iframe');
-
-      editor.value = data.trim();
-      updatePreview(data.trim());
+      updateEditor(data);
+      updatePreview(data);
     });
 
     return () => html`
-      <textarea @input=${debounce(handleEdit)}></textarea>
-      <iframe sandbox="allow-forms allow-scripts" srcdoc=""></iframe>
+      <textarea @input=${debounce(handleEditorInput)} ${ref(editor)}></textarea>
+      <iframe sandbox="allow-scripts" srcdoc="" ${ref(preview)}></iframe>
     `;
   });
 </script>
