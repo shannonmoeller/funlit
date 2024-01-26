@@ -56,6 +56,9 @@ button {
   font-weight: 500;
   touch-action: manipulation;
   -webkit-user-select: none;
+  transition:
+    filter 200ms,
+    opacity 200ms;
   user-select: none;
 }
 
@@ -66,5 +69,6 @@ button:focus-visible {
 
 button:disabled {
   cursor: not-allowed;
+  filter: blur(0.05rem);
   opacity: 50%;
 }
