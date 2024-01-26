@@ -1,0 +1,65 @@
+<script type="module">
+  import { define, attr, val, html } from 'funlit';
+
+  define('fun-timer', (host) => {
+    const duration = attr(host, 'duration', 2, {
+      parse: Number,
+    });
+
+    const time = val(host, 0);
+    const prev = val(host, 0);
+
+    function play() {
+      prev.value = performance.now();
+      requestAnimationFrame(tick);
+    }
+
+    function pause() {
+      prev.value = 0;
+    }
+
+    function reset() {
+      time.value = duration.value;
+    }
+
+    function tick(next) {
+      if (prev.value) {
+        const delta = (next - prev.value) / 1000;
+
+        time.value = Math.max(0, time.value - delta);
+        prev.value = time.value && next;
+
+        requestAnimationFrame(tick);
+      }
+    }
+
+    host.addEventListener('connect', reset);
+    host.addEventListener('disconnect', pause);
+
+    return () => html`
+      ${time.value.toFixed(2)}
+      <button @click=${prev.value ? pause : play}>
+        ${prev.value ? 'pause' : 'play'}
+      </button>
+      <button @click=${reset}>reset</button>
+    `;
+  });
+</script>
+
+<style>
+  fun-timer {
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1ch;
+    margin: 1rem;
+  }
+</style>
+
+<fun-timer></fun-timer>
+<fun-timer duration="10"></fun-timer>
+<script>
+  const timer = document.createElement('fun-timer');
+  timer.duration = 20;
+  document.body.append(timer);
+</script>

@@ -7,17 +7,21 @@
 import { html, svg, nothing, render } from 'lit-html';
 
 export {
-	defineElement as define,
-	defineAttribute as attr,
-	defineProperty as prop,
-	defineValue as val,
-	html,
-	svg,
-	nothing,
+  defineElement as define,
+  defineAttribute as attr,
+  defineProperty as prop,
+  defineValue as val,
+  html,
+  svg,
+  nothing,
 };
 
 /**
  * @typedef {import('lit-html').TemplateResult} TemplateResult
+ */
+
+/**
+ * @typedef {null | undefined | void} Nil
  */
 
 /**
@@ -31,12 +35,12 @@ export {
  */
 
 /**
- * @typedef {(() => TemplateResult) | null | undefined} Renderer
+ * @typedef {() => TemplateResult | Nil} Renderer
  */
 
 /**
  * @template {object} T
- * @typedef {(host: FunlitElementInstance<T>) => Renderer} Init
+ * @typedef {(host: FunlitElementInstance<T>) => Renderer | Nil} Init
  */
 
 /**
@@ -53,7 +57,7 @@ const refCache = new WeakMap();
  * @param {unknown} value
  */
 function unsafeCast(value) {
-	return /** @type {T} */ (value);
+  return /** @type {T} */ (value);
 }
 
 /**
@@ -61,62 +65,62 @@ function unsafeCast(value) {
  * @template {object} T
  */
 export class FunlitElement extends HTMLElement {
-	/** @type {Init<T> | null} */
-	#init = null;
+  /** @type {Init<T> | null} */
+  #init = null;
 
-	/** @type {boolean} */
-	#isInitialized = false;
+  /** @type {boolean} */
+  #isInitialized = false;
 
-	/** @type {Renderer | null} */
-	#render = null;
+  /** @type {Renderer | null} */
+  #render = null;
 
-	/** @type {Promise<void> | null} */
-	updateComplete = null;
+  /** @type {Promise<void> | null} */
+  updateComplete = null;
 
-	/**
-	 * @param {Init<T>} init
-	 */
-	constructor(init) {
-		super();
-		this.#init = init;
-	}
+  /**
+   * @param {Init<T>} init
+   */
+  constructor(init) {
+    super();
+    this.#init = init;
+  }
 
-	adoptedCallback() {
-		this.dispatchEvent(new CustomEvent('adopt'));
-	}
+  adoptedCallback() {
+    this.dispatchEvent(new CustomEvent('adopt'));
+  }
 
-	connectedCallback() {
-		if (!this.isConnected) return;
+  connectedCallback() {
+    if (!this.isConnected) return;
 
-		if (!this.#isInitialized) {
-			refCache.set(this, new Map());
+    if (!this.#isInitialized) {
+      refCache.set(this, new Map());
 
-			this.#render = this.#init?.(unsafeCast(this)) ?? null;
-			this.#isInitialized = true;
-		}
+      this.#render = this.#init?.(unsafeCast(this)) ?? null;
+      this.#isInitialized = true;
+    }
 
-		this.update();
-		this.dispatchEvent(new CustomEvent('connect'));
-	}
+    this.update();
+    this.dispatchEvent(new CustomEvent('connect'));
+  }
 
-	disconnectedCallback() {
-		if (this.isConnected) return;
+  disconnectedCallback() {
+    if (this.isConnected) return;
 
-		this.dispatchEvent(new CustomEvent('disconnect'));
-	}
+    this.dispatchEvent(new CustomEvent('disconnect'));
+  }
 
-	update = () => {
-		return (this.updateComplete ??= Promise.resolve().then(() => {
-			this.dispatchEvent(new CustomEvent('update'));
-			this.updateComplete = null;
+  update = () => {
+    return (this.updateComplete ??= Promise.resolve().then(() => {
+      this.dispatchEvent(new CustomEvent('update'));
+      this.updateComplete = null;
 
-			const result = this.#render?.();
+      const result = this.#render?.();
 
-			if (result !== undefined) {
-				render(result, this.shadowRoot || this);
-			}
-		}));
-	};
+      if (result !== undefined) {
+        render(result, this.shadowRoot || this);
+      }
+    }));
+  };
 }
 
 /**
@@ -125,11 +129,11 @@ export class FunlitElement extends HTMLElement {
  * @param {Init<T>} init
  */
 export function defineElement(tagName, init) {
-	const CustomFunlitElement = createElement(tagName, init);
+  const CustomFunlitElement = createElement(tagName, init);
 
-	customElements.define(tagName, CustomFunlitElement);
+  customElements.define(tagName, CustomFunlitElement);
 
-	return CustomFunlitElement;
+  return CustomFunlitElement;
 }
 
 /**
@@ -146,35 +150,35 @@ export function defineElement(tagName, init) {
  * @returns {ValueRef<T[K]>}
  */
 export function defineAttribute(host, key, value, options = {}) {
-	if (refCache.get(host).has(key)) {
-		return refCache.get(host).get(key);
-	}
+  if (refCache.get(host).has(key)) {
+    return refCache.get(host).get(key);
+  }
 
-	const {
-		attribute = hyphenify(key),
-		boolean = false,
-		parse = String,
-	} = options;
+  const {
+    attribute = hyphenify(key),
+    boolean = false,
+    parse = String,
+  } = options;
 
-	new MutationObserver(() => {
-		host[key] = unsafeCast(
-			boolean
-				? host.hasAttribute(attribute)
-				: parse(host.getAttribute(attribute) ?? ''),
-		);
-	}).observe(host, {
-		attributeFilter: [attribute],
-	});
+  new MutationObserver(() => {
+    host[key] = unsafeCast(
+      boolean
+        ? host.hasAttribute(attribute)
+        : parse(host.getAttribute(attribute) ?? ''),
+    );
+  }).observe(host, {
+    attributeFilter: [attribute],
+  });
 
-	if (key in host) {
-		value = host[key];
-	} else if (host.hasAttribute(attribute)) {
-		value = unsafeCast(
-			boolean ? true : parse(host.getAttribute(attribute) ?? ''),
-		);
-	}
+  if (key in host) {
+    value = host[key];
+  } else if (host.hasAttribute(attribute)) {
+    value = unsafeCast(
+      boolean ? true : parse(host.getAttribute(attribute) ?? ''),
+    );
+  }
 
-	return createProperty(host, key, value, options);
+  return createProperty(host, key, value, options);
 }
 
 /**
@@ -188,15 +192,15 @@ export function defineAttribute(host, key, value, options = {}) {
  * @returns {ValueRef<T[K]>}
  */
 export function defineProperty(host, key, value, options = {}) {
-	if (refCache.get(host).has(key)) {
-		return refCache.get(host).get(key);
-	}
+  if (refCache.get(host).has(key)) {
+    return refCache.get(host).get(key);
+  }
 
-	if (key in host) {
-		value = host[key];
-	}
+  if (key in host) {
+    value = host[key];
+  }
 
-	return createProperty(host, key, value, options);
+  return createProperty(host, key, value, options);
 }
 
 /**
@@ -209,7 +213,7 @@ export function defineProperty(host, key, value, options = {}) {
  * @returns {ValueRef<V>}
  */
 export function defineValue(host, value, options = {}) {
-	return createValue(host, value, options);
+  return createValue(host, value, options);
 }
 
 /**
@@ -218,20 +222,20 @@ export function defineValue(host, value, options = {}) {
  * @param {Init<T>} init
  */
 export function createElement(tagName, init) {
-	/** @extends {FunlitElement<T>} */
-	class CustomFunlitElement extends FunlitElement {
-		static tagName = tagName;
+  /** @extends {FunlitElement<T>} */
+  class CustomFunlitElement extends FunlitElement {
+    static tagName = tagName;
 
-		constructor() {
-			super(init);
-		}
-	}
+    constructor() {
+      super(init);
+    }
+  }
 
-	Object.defineProperty(CustomFunlitElement, 'name', {
-		value: `${pascalify(tagName)}Element`,
-	});
+  Object.defineProperty(CustomFunlitElement, 'name', {
+    value: `${pascalify(tagName)}Element`,
+  });
 
-	return /** @type {FunlitElementConstructor<T>} */ (CustomFunlitElement);
+  return /** @type {FunlitElementConstructor<T>} */ (CustomFunlitElement);
 }
 
 /**
@@ -245,26 +249,26 @@ export function createElement(tagName, init) {
  * @returns {ValueRef<T[K]>}
  */
 export function createProperty(host, key, value, options = {}) {
-	if (refCache.get(host).has(key)) {
-		return refCache.get(host).get(key);
-	}
+  if (refCache.get(host).has(key)) {
+    return refCache.get(host).get(key);
+  }
 
-	const ref = createValue(host, value, options);
+  const ref = createValue(host, value, options);
 
-	Object.defineProperty(host, key, {
-		configurable: false,
-		enumerable: true,
-		get() {
-			return ref.value;
-		},
-		set(next) {
-			ref.value = next;
-		},
-	});
+  Object.defineProperty(host, key, {
+    configurable: false,
+    enumerable: true,
+    get() {
+      return ref.value;
+    },
+    set(next) {
+      ref.value = next;
+    },
+  });
 
-	refCache.get(host).set(key, ref);
+  refCache.get(host).set(key, ref);
 
-	return ref;
+  return ref;
 }
 
 /**
@@ -277,34 +281,34 @@ export function createProperty(host, key, value, options = {}) {
  * @returns {ValueRef<V>}
  */
 export function createValue(host, value, options = {}) {
-	const { stringify = String } = options;
+  const { stringify = String } = options;
 
-	return {
-		get value() {
-			return value;
-		},
-		set value(next) {
-			if (next === value) return;
+  return {
+    get value() {
+      return value;
+    },
+    set value(next) {
+      if (next === value) return;
 
-			value = next;
-			host.update();
-		},
-		toString() {
-			return stringify(value);
-		},
-	};
+      value = next;
+      host.update();
+    },
+    toString() {
+      return stringify(value);
+    },
+  };
 }
 
 /**
  * @param {string | null | undefined} value
  */
 function hyphenify(value) {
-	return value?.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`) ?? '';
+  return value?.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`) ?? '';
 }
 
 /**
  * @param {string | null | undefined} value
  */
 function pascalify(value) {
-	return value?.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase()) ?? '';
+  return value?.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase()) ?? '';
 }

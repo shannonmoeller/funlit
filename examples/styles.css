@@ -1,0 +1,57 @@
+:root {
+  --accentColor: color-mix(in lab, canvastext 15%, orange);
+  --accentBackground: color-mix(in lab, var(--accentColor) 15%, transparent);
+}
+
+* {
+  box-sizing: border-box;
+  margin: unset;
+  padding: unset;
+  border: unset;
+  outline: unset;
+  background: unset;
+  color: inherit;
+  font: inherit;
+}
+
+html {
+  color-scheme: dark light;
+  accent-color: var(--accentColor);
+  background-color: canvas;
+  color: canvastext;
+}
+
+body {
+  font:
+    200 max(16px, 1rem) / 1.5 ui-sans-serif,
+    system-ui,
+    sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+a {
+  color: var(--accentColor);
+  text-decoration: none;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration: underline;
+}
+
+button {
+  border-radius: 3em;
+  background-color: var(--accentBackground);
+  color: var(--accentColor);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:focus-visible {
+  outline: 2px solid;
+  outline-offset: 2px;
+}

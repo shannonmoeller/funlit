@@ -5,134 +5,134 @@
 <title>funlit - test</title>
 
 <style>
-	:root {
-		--accentColor: color-mix(in lab, canvastext 15%, orange);
-		--accentBackground: color-mix(in lab, var(--accentColor) 15%, transparent);
-	}
+  :root {
+    --accentColor: color-mix(in lab, canvastext 15%, orange);
+    --accentBackground: color-mix(in lab, var(--accentColor) 15%, transparent);
+  }
 
-	* {
-		box-sizing: border-box;
-		margin: unset;
-		padding: unset;
-		border: unset;
-		outline: unset;
-		background: unset;
-		color: inherit;
-		font: inherit;
-	}
+  * {
+    box-sizing: border-box;
+    margin: unset;
+    padding: unset;
+    border: unset;
+    outline: unset;
+    background: unset;
+    color: inherit;
+    font: inherit;
+  }
 
-	html {
-		color-scheme: dark light;
-		accent-color: orange;
-		background-color: canvas;
-		color: canvastext;
-		font: normal 100%/1.5 system-ui;
-	}
+  html {
+    color-scheme: dark light;
+    accent-color: orange;
+    background-color: canvas;
+    color: canvastext;
+    font: normal 100%/1.5 system-ui;
+  }
 
-	main {
-		padding: 2rem;
-	}
+  main {
+    padding: 2rem;
+  }
 
-	a {
-		color: var(--accentColor);
-		text-decoration: none;
-	}
+  a {
+    color: var(--accentColor);
+    text-decoration: none;
+  }
 
-	a:is(:hover, :focus-visible) {
-		text-decoration: underline;
-	}
+  a:is(:hover, :focus-visible) {
+    text-decoration: underline;
+  }
 
-	button {
-		border-radius: 3em;
-		background-color: var(--accentBackground);
-		color: var(--accentColor);
-		cursor: pointer;
-		touch-action: manipulation;
-		-webkit-user-select: none;
-		user-select: none;
-	}
+  button {
+    border-radius: 3em;
+    background-color: var(--accentBackground);
+    color: var(--accentColor);
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
 
-	button:focus-visible {
-		outline: 2px solid;
-		outline-offset: 2px;
-	}
+  button:focus-visible {
+    outline: 2px solid;
+    outline-offset: 2px;
+  }
 </style>
 
 <script type="importmap">
-	{
-		"imports": {
-			"funlit": "../funlit.js",
-			"lit-html": "https://unpkg.com/lit-html"
-		}
-	}
+  {
+    "imports": {
+      "funlit": "../funlit.js",
+      "lit-html": "https://unpkg.com/lit-html"
+    }
+  }
 </script>
 
 <script type="module">
-	import { define, attr, prop, val, html } from 'funlit';
+  import { define, attr, prop, val, html } from 'funlit';
 
-	define('test-connect', (host) => {
-		host.addEventListener('connect', async (event) => {
-			try {
-				console.log(event.type, host);
-				await host.updateComplete;
-				console.log('updateComplete', host);
-			} catch (error) {
-				console.error('updateError', host, error);
-			}
-		});
+  define('test-connect', (host) => {
+    host.addEventListener('connect', async (event) => {
+      try {
+        console.log(event.type, host);
+        await host.updateComplete;
+        console.log('updateComplete', host);
+      } catch (error) {
+        console.error('updateError', host, error);
+      }
+    });
 
-		return () => {
-			console.log('render', host);
-			return html`...`;
-		};
-	});
+    return () => {
+      console.log('render', host);
+      return html`...`;
+    };
+  });
 
-	define('test-update', (host) => {
-		host.addEventListener('update', async (event) => {
-			try {
-				console.log(event.type, host);
-				await host.updateComplete;
-				console.log('updateComplete', host);
-			} catch (error) {
-				console.error('updateError', host, error);
-			}
-		});
+  define('test-update', (host) => {
+    host.addEventListener('update', async (event) => {
+      try {
+        console.log(event.type, host);
+        await host.updateComplete;
+        console.log('updateComplete', host);
+      } catch (error) {
+        console.error('updateError', host, error);
+      }
+    });
 
-		return () => {
-			console.log('render', host);
-			return html`...`;
-		};
-	});
+    return () => {
+      console.log('render', host);
+      return html`...`;
+    };
+  });
 
-	define('test-update-error', (host) => {});
+  define('test-update-error', (host) => {});
 
-	define('test-disconnect', (host) => {
-		host.addEventListener('disconnect', (event) => {
-			console.log(event.type, host);
-		});
-	});
+  define('test-disconnect', (host) => {
+    host.addEventListener('disconnect', (event) => {
+      console.log(event.type, host);
+    });
+  });
 
-	define('test-attr', (host) => {
-		function reset() {
-			host.setAttribute('count', '0');
-		}
-	});
+  define('test-attr', (host) => {
+    function reset() {
+      host.setAttribute('count', '0');
+    }
+  });
 
-	define('test-prop', (host) => {});
+  define('test-prop', (host) => {});
 
-	define('test-val', (host) => {});
+  define('test-val', (host) => {});
 </script>
 
 <main>
-	<header>
-		<h1>Test</h1>
-	</header>
+  <header>
+    <h1>Test</h1>
+  </header>
 
-	<test-connect></test-connect>
-	<test-update></test-update>
-	<test-update-error></test-update-error>
-	<test-disconnect></test-disconnect>
-	<test-attr></test-attr>
-	<test-prop></test-prop>
-	<test-val></test-val>
+  <test-connect></test-connect>
+  <test-update></test-update>
+  <test-update-error></test-update-error>
+  <test-disconnect></test-disconnect>
+  <test-attr></test-attr>
+  <test-prop></test-prop>
+  <test-val></test-val>
 </main>
