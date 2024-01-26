@@ -38,7 +38,7 @@
 
     return () => html`
       ${time.value.toFixed(2)}
-      <button @click=${prev.value ? pause : play}>
+      <button .disabled=${!time.value} @click=${prev.value ? pause : play}>
         ${prev.value ? 'pause' : 'play'}
       </button>
       <button @click=${reset}>reset</button>
