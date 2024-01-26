@@ -119,9 +119,16 @@
     gap: 2rem;
   }
 
-  p {
+  .app-hero {
     max-inline-size: 45ch;
     text-wrap: pretty;
+  }
+
+  .app-legal {
+    padding-block-start: 0.5rem;
+    border-block-start: 1px dashed var(--border);
+    font-size: max(10px, 0.75rem);
+    text-wrap: balance;
   }
 
   fun-example {
@@ -165,7 +172,7 @@
   </header>
 
   <main class="app-body">
-    <p>
+    <p class="app-hero">
       Magicless function <a href="https://npm.im/lit-html">Lit</a> elements with
       reactive attributes, properties, and values. Light DOM by default for all
       of your progressive-enhancement needs.
@@ -173,4 +180,10 @@
     <fun-example src="./examples/fun-stepper.html"></fun-example>
     <fun-example src="./examples/fun-timer.html"></fun-example>
   </main>
+
+  <footer class="app-foot">
+    <p class="app-legal">
+      Copyright © 2024 <a href="https://shannonmoeller.com">Shannon Moeller</a>.
+      Licensed under <a href="https://github.com/shannonmoeller/funlit/blob/main/LICENSE.md">MIT</a>.
+    </p>
 </div>
