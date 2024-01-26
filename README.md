@@ -1,6 +1,6 @@
 # 🪵 funlit
 
-Function [Lit](https://npm.im/lit-html) elements with reactive attributes, properties, and values. Light DOM by default for all of your progressive-enhancement needs.
+Magicless function [Lit](https://npm.im/lit-html) elements with reactive attributes, properties, and values. Light DOM by default for all of your progressive-enhancement needs.
 
 [Live demo](https://shannonmoeller.github.io/funlit).
 
