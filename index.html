@@ -55,10 +55,10 @@
           editor.value.innerHTML = content.replace(
             /[^a-z0-9]+/gi,
             (a) =>
-              `<span class="nonword">${a
+              `<i>${a
                 .replaceAll('&', '&amp;')
                 .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')}</span>`,
+                .replaceAll('>', '&gt;')}</i>`,
           );
         }
 
@@ -114,7 +114,9 @@
         host.addEventListener('connect', async () => {
           const url = new URL(host.getAttribute('src'), location.href);
 
-          if (url.origin !== location.origin) throw new Error('Nice try.');
+          if (url.origin !== location.origin) {
+            throw new Error('Nice try.');
+          }
 
           const request = await fetch(url);
           const data = await request.text();
@@ -204,7 +206,7 @@
         border: 1px solid var(--border);
         contain: paint;
 
-        & pre {
+        & > pre {
           padding: 1rem;
           block-size: 21rem;
           overflow: auto;
@@ -218,15 +220,15 @@
           white-space: pre;
         }
 
-        & iframe {
+        & > pre i {
+          color: var(--accentForeground);
+        }
+
+        & > iframe {
           block-size: 100%;
           min-block-size: 9rem;
           inline-size: 100%;
           outline: 1px dashed var(--border);
-        }
-
-        & .nonword {
-          color: var(--accentForeground);
         }
       }
     </style>
