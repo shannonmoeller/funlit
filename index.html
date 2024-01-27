@@ -47,7 +47,7 @@
           if (!editor.value) return;
 
           // prettier-ignore
-          editor.value.innerHTML = content.replace(/[^a-z0-9]+/gi, (x) =>
+          editor.value.innerHTML = content.replace(/[^a-z0-9\s]+/gi, (x) =>
             `<i>${x.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</i>`,
           );
         }
