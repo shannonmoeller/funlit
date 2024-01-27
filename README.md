@@ -139,7 +139,7 @@ Alias: `defineAttribute`
 
 Returns: `{{ value; toString: () => string }}`
 
-Defines a new property on the host. Any change to the property will trigger an update-render cycle. The property is initialized with and will watch for changes to the related attribute's value. Changes to the property will not be reflected back to the DOM attribute (this is intentional for performance and security). Returns a mutable value ref.
+Defines a new public property on the host. Any change to the property will trigger an update-render cycle. The property is initialized with and will watch for changes to the related attribute's value. Changes to the property will not be reflected back to the DOM attribute (this is intentional for performance and security). Returns a mutable value ref.
 
 ```js
 define('my-counter', (host) => {
@@ -187,7 +187,7 @@ Alias: `defineProperty`
 
 Returns: `{{ value; toString: () => string }}`
 
-Defines a new property on the host. Any change to the property will trigger an update-render cycle. Returns a mutable value ref.
+Defines a new public property on the host. Any change to the property will trigger an update-render cycle. Returns a mutable value ref.
 
 ```js
 define('my-counter', (host) => {
