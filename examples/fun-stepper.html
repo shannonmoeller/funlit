@@ -14,15 +14,10 @@
       count.value++;
     }
 
-    function reset() {
-      count.value = 0;
-    }
-
     return () => html`
       ${count}
       <button @click=${decrement}>-</button>
       <button @click=${increment}>+</button>
-      <button @click=${reset}>x</button>
     `;
   });
 </script>
@@ -30,8 +25,8 @@
 <style>
   fun-stepper {
     display: grid;
-    align-items: center;
-    grid-template-columns: 8ch repeat(3, minmax(0, 1fr));
+    align-items: baseline;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1ch;
     margin: 1rem;
   }
@@ -39,6 +34,7 @@
 
 <fun-stepper></fun-stepper>
 <fun-stepper count="10"></fun-stepper>
+
 <script type="module">
   const stepper = document.createElement('fun-stepper');
   stepper.count = 20;

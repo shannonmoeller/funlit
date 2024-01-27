@@ -49,8 +49,8 @@
 <style>
   fun-timer {
     display: grid;
-    align-items: center;
-    grid-template-columns: 8ch repeat(2, minmax(0, 1fr));
+    align-items: baseline;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1ch;
     margin: 1rem;
   }
@@ -58,6 +58,7 @@
 
 <fun-timer></fun-timer>
 <fun-timer duration="10"></fun-timer>
+
 <script type="module">
   const timer = document.createElement('fun-timer');
   timer.duration = 20;

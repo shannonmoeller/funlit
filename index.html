@@ -4,7 +4,7 @@
     <meta charset="utf8" />
     <meta
       name="description"
-      content="Magicless function Lit elements with reactive attributes, properties, and values."
+      content="Function Lit elements with reactive attributes, properties, and values."
     />
     <meta
       name="viewport"
@@ -52,7 +52,14 @@
         function updateEditor(content) {
           if (!editor.value) return;
 
-          editor.value.value = content.trim();
+          editor.value.innerHTML = content.replace(
+            /[^a-z0-9]+/gi,
+            (a) =>
+              `<span class="nonword">${a
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')}</span>`,
+          );
         }
 
         function updatePreview(content) {
@@ -73,10 +80,32 @@
           `;
         }
 
-        function handleEditorInput(event) {
-          if (!(event.target instanceof HTMLTextAreaElement)) return;
+        const debouncedUpdatePreview = debounce(updatePreview);
 
-          updatePreview(event.target.value);
+        function handlePreInput(event) {
+          if (!(event.target instanceof HTMLPreElement)) return;
+
+          const selection = document.getSelection();
+
+          selection.extend(editor.value);
+
+          let offset = selection.toString().length;
+
+          updateEditor(editor.value.textContent);
+          debouncedUpdatePreview(editor.value.textContent);
+
+          let node = editor.value.firstChild;
+
+          while (node?.textContent.length < offset) {
+            offset -= node.textContent.length;
+            node = node.nextSibling;
+          }
+
+          while (node.nodeType !== Node.TEXT_NODE) {
+            node = node.firstChild;
+          }
+
+          selection.collapse(node, offset);
         }
 
         host.addEventListener('connect', async () => {
@@ -94,11 +123,13 @@
         });
 
         return () => html`
-          <textarea
+          <pre
             aria-label="editor"
-            @input=${debounce(handleEditorInput)}
+            contenteditable="plaintext-only"
+            spellcheck="false"
+            @input=${handlePreInput}
             ${ref(editor)}
-          ></textarea>
+          ></pre>
           <iframe
             sandbox="allow-scripts"
             srcdoc=""
@@ -170,10 +201,10 @@
         border: 1px solid var(--border);
         contain: paint;
 
-        & textarea {
+        & pre {
           padding: 1rem;
-          block-size: 100%;
-          min-block-size: 20rem;
+          block-size: 21rem;
+          overflow: auto;
           font:
             100 max(10px, 0.66rem) / 1.25 ui-monospace,
             'Menlo',
@@ -189,6 +220,10 @@
           min-block-size: 9rem;
           inline-size: 100%;
           outline: 1px dashed var(--border);
+        }
+
+        & .nonword {
+          color: var(--accentForeground);
         }
       }
     </style>
@@ -207,9 +242,9 @@
 
       <main class="app-body">
         <p class="app-hero">
-          Magicless function <a href="https://npm.im/lit-html">Lit</a> elements
-          with reactive attributes, properties, and values. Light&nbsp;DOM by
-          default for all your progressive-enhancement needs.
+          Function <a href="https://npm.im/lit-html">Lit</a> elements with
+          reactive attributes, properties, and values. Light&nbsp;DOM by default
+          for all your progressive&#8209;enhancement needs.
         </p>
         <fun-example src="./examples/fun-stepper.html"></fun-example>
         <fun-example src="./examples/fun-timer.html"></fun-example>
