@@ -2,18 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="utf8" />
-    <meta
-      name="description"
-      content="Function Lit elements with reactive attributes, properties, and values."
-    />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1"
-    />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪵</text></svg>"
-    />
+    <!-- prettier-ignore -->
+    <meta name="description" content="Function Lit elements with reactive attributes, properties, and values." />
+    <!-- prettier-ignore -->
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+    <!-- prettier-ignore -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪵</text></svg>" />
 
     <title>funlit</title>
 
@@ -52,13 +46,9 @@
         function updateEditor(content) {
           if (!editor.value) return;
 
-          editor.value.innerHTML = content.replace(
-            /[^a-z0-9]+/gi,
-            (a) =>
-              `<i>${a
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')}</i>`,
+          // prettier-ignore
+          editor.value.innerHTML = content.replace(/[^a-z0-9]+/gi, (x) =>
+            `<i>${x.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</i>`,
           );
         }
 
@@ -93,9 +83,10 @@
           selection.extend(editor.value);
 
           let offset = selection.toString().length;
+          let content = editor.value.textContent;
 
-          updateEditor(editor.value.textContent);
-          debouncedUpdatePreview(editor.value.textContent);
+          updateEditor(content);
+          debouncedUpdatePreview(content);
 
           let node = editor.value.firstChild;
 
@@ -114,9 +105,7 @@
         host.addEventListener('connect', async () => {
           const url = new URL(host.getAttribute('src'), location.href);
 
-          if (url.origin !== location.origin) {
-            throw new Error('Nice try.');
-          }
+          if (url.origin !== location.origin) throw new Error();
 
           const request = await fetch(url);
           const data = await request.text();
@@ -256,14 +245,10 @@
       </main>
 
       <footer class="app-foot">
+        <!-- prettier-ignore -->
         <p class="app-legal">
-          Copyright © 2024
-          <a href="https://shannonmoeller.com">Shannon Moeller</a>. Licensed
-          under
-          <a
-            href="https://github.com/shannonmoeller/funlit/blob/main/LICENSE.md"
-            >MIT</a
-          >.
+          Copyright © 2024 <a href="https://shannonmoeller.com">Shannon Moeller</a>.
+          Licensed under <a href="https://github.com/shannonmoeller/funlit/blob/main/LICENSE.md">MIT</a>.
         </p>
       </footer>
     </div>
