@@ -1,6 +1,6 @@
 # 🪵 funlit
 
-Function [Lit](https://npm.im/lit-html) elements with reactive attributes, properties, and values. Light DOM by default for all your progressive-enhancement needs.
+Function [Lit](https://npm.im/lit-html) elements with reactive attributes, properties, and state. Light DOM by default for all your progressive-enhancement needs.
 
 [Live demo](https://shannonmoeller.github.io/funlit).
 
@@ -81,7 +81,7 @@ Returns: `{FunlitElementConstructor}`
 
 Defines a new custom element with the given tag name and `init` function. Returns the newly-created custom-element class constructor.
 
-The `init` function is only called once per instance of the element (the [host](#host)) the first time the host is connected. The function is passed a reference to the host which can be used to define attributes, properties, and values, as well as anything else you'd like. You can think of `init` like the constuctor, but it doesn't run until the host has been added to a document. May return a `render` function.
+The `init` function is only called once per instance of the element (the [host](#host)) the first time the host is connected. The function is passed a reference to the host which can be used to define attributes, properties, and state, as well as anything else you'd like. You can think of `init` like the constuctor, but it doesn't run until the host has been added to a document. May return a `render` function.
 
 The `render` function will be called on every update-render cycle. May return a lit-html `TemplateResult` to be used to render an updated Light DOM subtree, or Shadow DOM subtree if `host.attachShadow()` has been called.
 
@@ -228,7 +228,7 @@ Alias: `defineValue`
 
 Returns: `{{ value; toString: () => string }}`
 
-Defines a new private value. Any change to the value will trigger an update-render cycle. Returns a mutable value ref.
+Defines a new private state value. Any change to the value will trigger an update-render cycle. Returns a mutable value ref.
 
 ```js
 define('my-counter', (host) => {
