@@ -1,11 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@300&family=Noto+Sans:wght@300;500;700&display=swap');
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-background: hsl(0 0% 100%);
+    --color-foreground: hsl(0 0% 20%);
+    --color-accent: mediumspringgreen;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: hsl(0 0% 0%);
+    --color-foreground: hsl(0 0% 90%);
+    --color-accent: springgreen;
+  }
+}
+
 :root {
-  color-scheme: dark light;
-  --background: color-mix(in oklab, white 5%, canvas);
-  --foreground: color-mix(in oklab, white 20%, canvastext);
-  --accentBackground: color-mix(in oklab, springgreen 15%, transparent);
-  --accentBlob: color-mix(in oklab, springgreen 10%, transparent);
-  --accentForeground: color-mix(in oklab, springgreen 70%, canvastext);
-  --border: hsl(0 0% 50% / 20%);
+  color-scheme: light dark;
+  --color-backgroundAccent: color-mix(
+    in oklab,
+    var(--color-accent) 15%,
+    transparent
+  );
+  --color-backgroundBlob: color-mix(
+    in oklab,
+    var(--color-accent) 10%,
+    transparent
+  );
+  --color-border: hsl(0 0% 50% / 20%);
+  --color-foregroundAccent: color-mix(
+    in oklab,
+    var(--color-accent) 70%,
+    var(--color-foreground)
+  );
+  --font-familyBody: 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-familyMono: 'Noto Sans Mono', ui-monospace, monospace;
+  --font-body: 300 1rem / 1.5 var(--font-familyBody);
+  --font-display: 700 2rem / 1 var(--font-familyBody);
+  --font-legal: 300 max(10px, 0.75rem) / 1.5 var(--font-familyBody);
+  --font-mono: 300 max(11px, 0.6875rem) / 1.25 var(--font-familyMono);
+  --font-weightActive: 500;
 }
 
 * {
@@ -20,27 +55,22 @@
 }
 
 body {
-  accent-color: var(--accentForeground);
-  background: var(--background);
-  color: var(--foreground);
-  font:
-    200 max(16px, 1rem) / 1.5 ui-sans-serif,
-    system-ui,
-    sans-serif;
+  accent-color: var(--color-foregroundAccent);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font: var(--font-body);
   -webkit-text-size-adjust: none;
   text-size-adjust: none;
 }
 
 h1 {
-  font-size: 2rem;
-  font-weight: 800;
-  line-height: 1;
+  font: var(--font-display);
   text-wrap: balance;
 }
 
 a {
-  color: var(--accentForeground);
-  font-weight: 500;
+  color: var(--color-foregroundAccent);
+  font-weight: var(--font-weightActive);
   text-decoration: none;
 }
 
@@ -50,15 +80,13 @@ a:is(:active, :hover, :focus-visible) {
 
 button {
   border-radius: 3em;
-  background: var(--accentBackground);
-  color: var(--accentForeground);
+  background: var(--color-backgroundAccent);
+  color: var(--color-foregroundAccent);
   cursor: pointer;
-  font-weight: 500;
+  font-weight: var(--font-weightActive);
   touch-action: manipulation;
   -webkit-user-select: none;
-  transition:
-    filter 200ms,
-    opacity 200ms;
+  transition: all 200ms;
   user-select: none;
 }
 
@@ -71,4 +99,9 @@ button:disabled {
   cursor: not-allowed;
   filter: blur(0.05rem);
   opacity: 50%;
+  scale: 99%;
+}
+
+pre {
+  font: var(--font-mono);
 }

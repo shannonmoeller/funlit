@@ -1,0 +1,41 @@
+<script type="module">
+  import { define, attr, html } from 'funlit';
+  import { adoptStyles, css } from '@lit/reactive-element/css-tag.js';
+
+  define('fun-counter', (host) => {
+    host.attachShadow({ mode: 'open' });
+
+    adoptStyles(host.shadowRoot, [
+      css`
+        :host {
+          display: grid;
+          align-items: baseline;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1ch;
+        }
+      `,
+    ]);
+
+    const count = attr(host, 'count', 0, {
+      parse: Number,
+    });
+
+    function increment() {
+      count.value++;
+    }
+
+    return () => html`
+      ${count}
+      <button @click=${increment}>+</button>
+    `;
+  });
+</script>
+
+<fun-counter></fun-counter>
+<fun-counter count="10"></fun-counter>
+
+<script type="module">
+  const counter = document.createElement('fun-counter');
+  counter.count = 20;
+  document.body.append(counter);
+</script>

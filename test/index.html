@@ -4,65 +4,13 @@
 
 <title>funlit - test</title>
 
-<style>
-  :root {
-    --accentColor: color-mix(in lab, canvastext 15%, orange);
-    --accentBackground: color-mix(in lab, var(--accentColor) 15%, transparent);
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: unset;
-    padding: unset;
-    border: unset;
-    outline: unset;
-    background: unset;
-    color: inherit;
-    font: inherit;
-  }
-
-  html {
-    color-scheme: dark light;
-    accent-color: orange;
-    background-color: canvas;
-    color: canvastext;
-    font: normal 100%/1.5 system-ui;
-  }
-
-  main {
-    padding: 2rem;
-  }
-
-  a {
-    color: var(--accentColor);
-    text-decoration: none;
-  }
-
-  a:is(:hover, :focus-visible) {
-    text-decoration: underline;
-  }
-
-  button {
-    border-radius: 3em;
-    background-color: var(--accentBackground);
-    color: var(--accentColor);
-    cursor: pointer;
-    touch-action: manipulation;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  button:focus-visible {
-    outline: 2px solid;
-    outline-offset: 2px;
-  }
-</style>
-
 <script type="importmap">
   {
     "imports": {
       "funlit": "../funlit.js",
-      "lit-html": "https://unpkg.com/lit-html"
+      "lit-html": "https://unpkg.com/lit-html",
+      "lit-html/": "https://unpkg.com/lit-html/",
+      "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element/"
     }
   }
 </script>
@@ -122,6 +70,14 @@
 
   define('test-val', (host) => {});
 </script>
+
+<style>
+  @import '../examples/styles.css';
+
+  main {
+    padding: 1rem;
+  }
+</style>
 
 <main>
   <header>

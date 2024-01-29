@@ -16,7 +16,8 @@
         "imports": {
           "funlit": "https://unpkg.com/funlit",
           "lit-html": "https://unpkg.com/lit-html",
-          "lit-html/": "https://unpkg.com/lit-html/"
+          "lit-html/": "https://unpkg.com/lit-html/",
+          "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element/"
         }
       }
     </script>
@@ -141,7 +142,7 @@
         background-attachment: fixed;
         background-image: radial-gradient(
           circle at 100% 0%,
-          var(--accentBlob),
+          var(--color-backgroundBlob),
           transparent
         );
       }
@@ -175,14 +176,14 @@
       }
 
       .app-hero {
-        max-inline-size: 45ch;
+        max-inline-size: 40ch;
         text-wrap: balance;
       }
 
       .app-legal {
         padding-block-start: 0.5rem;
-        border-block-start: 1px dashed var(--border);
-        font-size: max(10px, 0.75rem);
+        border-block-start: 1px dashed var(--color-border);
+        font: var(--font-legal);
         text-wrap: balance;
       }
 
@@ -192,33 +193,28 @@
         grid-auto-rows: min-content;
         min-block-size: 20rem;
         border-radius: 0.5rem;
-        border: 1px solid var(--border);
+        border: 1px solid var(--color-border);
         contain: paint;
 
         & > pre {
           padding: 1rem;
-          block-size: 21rem;
-          min-block-size: 21rem;
+          block-size: 22rem;
+          min-block-size: 22rem;
           overflow: auto;
-          font:
-            100 max(10px, 0.66rem) / 1.25 ui-monospace,
-            'Menlo',
-            'Roboto Mono',
-            monospace;
           resize: vertical;
           tab-size: 2;
           white-space: pre;
         }
 
         & > pre i {
-          color: var(--accentForeground);
+          color: var(--color-foregroundAccent);
         }
 
         & > iframe {
           block-size: 100%;
           min-block-size: 9rem;
           inline-size: 100%;
-          outline: 1px dashed var(--border);
+          outline: 1px dashed var(--color-border);
         }
       }
     </style>
@@ -236,13 +232,15 @@
       </header>
 
       <main class="app-body">
+        <!-- prettier-ignore -->
         <p class="app-hero">
-          Function <a href="https://npm.im/lit-html">Lit</a> elements with
-          reactive attributes, properties, and state. Light&nbsp;DOM by default
-          for all your progressive&#8209;enhancement needs.
+          Function <a href="https://lit.dev/docs/libraries/standalone-templates/">Lit</a>
+          elements with reactive attributes, properties, and state. Light&nbsp;DOM
+          by default for all your progressive&#8209;enhancement needs.
         </p>
         <fun-example src="./examples/fun-stepper.html"></fun-example>
         <fun-example src="./examples/fun-timer.html"></fun-example>
+        <fun-example src="./examples/fun-shadow.html"></fun-example>
       </main>
 
       <footer class="app-foot">
