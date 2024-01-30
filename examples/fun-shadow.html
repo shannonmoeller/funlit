@@ -12,9 +12,9 @@
   `;
 
   define('fun-counter', (host) => {
-    const shadow = host.attachShadow({ mode: 'open' });
+    host.attachShadow({ mode: 'open' });
 
-    adoptStyles(shadow, [styles]);
+    adoptStyles(host.shadowRoot, [styles]);
 
     const count = attr(host, 'count', 0, {
       parse: Number,
