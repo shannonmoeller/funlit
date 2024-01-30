@@ -7,13 +7,14 @@
 import { html, svg, nothing, render } from 'lit-html';
 
 export {
+  html,
+  svg,
+  nothing,
   defineElement as define,
   defineAttribute as attr,
   defineProperty as prop,
   defineValue as val,
-  html,
-  svg,
-  nothing,
+  createElement as element,
 };
 
 /**
@@ -31,7 +32,7 @@ export {
 
 /**
  * @template {object} T
- * @typedef {{ new(): FunlitElementInstance<T>; tagName: string }} FunlitElementConstructor
+ * @typedef {{ new(): FunlitElementInstance<T> }} FunlitElementConstructor
  */
 
 /**
@@ -50,15 +51,15 @@ export {
  * @property {() => string} toString
  */
 
-const refCache = new WeakMap();
-
 /**
  * @template T
  * @param {unknown} value
  */
-function unsafeCast(value) {
+export function unsafeCast(value) {
   return /** @type {T} */ (value);
 }
+
+const refCache = new WeakMap();
 
 /**
  * @abstract
@@ -129,7 +130,11 @@ export class FunlitElement extends HTMLElement {
  * @param {Init<T>} init
  */
 export function defineElement(tagName, init) {
-  const CustomFunlitElement = createElement(tagName, init);
+  const CustomFunlitElement = createElement(init);
+
+  Object.defineProperty(CustomFunlitElement, 'name', {
+    value: tagName,
+  });
 
   customElements.define(tagName, CustomFunlitElement);
 
@@ -218,24 +223,18 @@ export function defineValue(host, value, options = {}) {
 
 /**
  * @template {object} T
- * @param {string} tagName
  * @param {Init<T>} init
+ * @returns {FunlitElementConstructor<T>}
  */
-export function createElement(tagName, init) {
+export function createElement(init) {
   /** @extends {FunlitElement<T>} */
   class CustomFunlitElement extends FunlitElement {
-    static tagName = tagName;
-
     constructor() {
       super(init);
     }
   }
 
-  Object.defineProperty(CustomFunlitElement, 'name', {
-    value: `${pascalify(tagName)}Element`,
-  });
-
-  return /** @type {FunlitElementConstructor<T>} */ (CustomFunlitElement);
+  return unsafeCast(CustomFunlitElement);
 }
 
 /**
@@ -304,11 +303,4 @@ export function createValue(host, value, options = {}) {
  */
 function hyphenify(value) {
   return value?.replace(/[A-Z]/g, (a) => `-${a.toLowerCase()}`) ?? '';
-}
-
-/**
- * @param {string | null | undefined} value
- */
-function pascalify(value) {
-  return value?.replace(/(?:^|-)(\w)/g, (a, b) => b.toUpperCase()) ?? '';
 }

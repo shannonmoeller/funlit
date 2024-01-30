@@ -2,19 +2,19 @@
   import { define, attr, html } from 'funlit';
   import { adoptStyles, css } from '@lit/reactive-element/css-tag.js';
 
-  define('fun-counter', (host) => {
-    host.attachShadow({ mode: 'open' });
+  const styles = css`
+    :host {
+      display: grid;
+      align-items: baseline;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1ch;
+    }
+  `;
 
-    adoptStyles(host.shadowRoot, [
-      css`
-        :host {
-          display: grid;
-          align-items: baseline;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1ch;
-        }
-      `,
-    ]);
+  define('fun-counter', (host) => {
+    const shadow = host.attachShadow({ mode: 'open' });
+
+    adoptStyles(shadow, [styles]);
 
     const count = attr(host, 'count', 0, {
       parse: Number,
@@ -32,6 +32,7 @@
 </script>
 
 <fun-counter></fun-counter>
+
 <fun-counter count="10"></fun-counter>
 
 <script type="module">
