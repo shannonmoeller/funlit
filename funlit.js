@@ -1,6 +1,7 @@
 /*!
- * @license MIT
+ * @license
  * Copyright (c) 2024 Shannon Moeller
+ * SPDX-License-Identifier: MIT
  * https://github.com/shannonmoeller/funlit
  */
 

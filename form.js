@@ -1,3 +1,10 @@
+/*!
+ * @license
+ * Copyright (c) 2024 Shannon Moeller
+ * SPDX-License-Identifier: MIT
+ * https://github.com/shannonmoeller/funlit
+ */
+
 import { FunlitElement, unsafeCast } from './funlit.js';
 
 export { defineFormElement as formDefine, createFormElement as formElement };
