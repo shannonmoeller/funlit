@@ -1,0 +1,83 @@
+<script type="module">
+  import { define, attr, prop, val, html } from 'funlit';
+  import { until } from 'lit-html/directives/until.js';
+  import { when } from 'lit-html/directives/when.js';
+
+  const API = 'https://jsonplaceholder.typicode.com';
+
+  async function fetchTodos(user) {
+    const request = await fetch(`${API}/users/${user}/todos`);
+
+    if (!request.ok) {
+      return html`<div>Oops!</div>`;
+    }
+
+    const data = await request.json();
+
+    return html`
+      <ul>
+        ${data.map(
+          (item) => html`
+            <li>
+              <button name="todo" .todo=${item}>${item.title}</button>
+            </li>
+          `,
+        )}
+      </ul>
+    `;
+  }
+
+  define('fun-todos', (host) => {
+    const selected = val(host, null);
+
+    host.addEventListener('click', (event) => {
+      switch (event.target.name) {
+        case 'todo':
+          selected.value = event.target.todo;
+          break;
+        case 'back':
+          selected.value = null;
+          break;
+      }
+    });
+
+    return () => html`
+      <h1>Todos</h1>
+      ${when(
+        !selected.value,
+        () => html`<fun-todos-list></fun-todos-list>`,
+        () => html`<fun-todos-item .todo=${selected.value}></fun-todos-item>`,
+      )}
+    `;
+  });
+
+  define('fun-todos-list', (host) => {
+    return () => html`
+      <h2>List</h2>
+      ${until(fetchTodos(1), html`<div>Loading</div>`)}
+    `;
+  });
+
+  define('fun-todos-item', (host) => {
+    const todo = prop(host, 'todo');
+
+    return () => html`
+      <h2>Item</h2>
+      <button name="back">Back</button>
+      ${todo.value.title}
+    `;
+  });
+</script>
+
+<style>
+  fun-todos {
+  }
+
+  fun-todos-list {
+  }
+
+  fun-todos-item {
+  }
+</style>
+
+<fun-todos></fun-todos>

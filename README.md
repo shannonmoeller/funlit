@@ -18,9 +18,9 @@ Browsers:
 <script type="importmap">
   {
     "imports": {
-      "funlit": "https://unpkg.com/funlit",
-      "lit-html": "https://unpkg.com/lit-html",
-      "lit-html/": "https://unpkg.com/lit-html/"
+      "funlit": "https://esm.sh/funlit",
+      "lit-html": "https://esm.sh/lit-html",
+      "lit-html/": "https://esm.sh/lit-html/"
     }
   }
 </script>

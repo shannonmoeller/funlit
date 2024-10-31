@@ -104,4 +104,6 @@ button:disabled {
 
 pre {
   font: var(--font-mono);
+  tab-size: 2;
+  white-space: pre;
 }

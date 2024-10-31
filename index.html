@@ -14,10 +14,10 @@
     <script id="importMap" type="importmap">
       {
         "imports": {
-          "funlit": "https://unpkg.com/funlit",
-          "lit-html": "https://unpkg.com/lit-html",
-          "lit-html/": "https://unpkg.com/lit-html/",
-          "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element/"
+          "funlit": "https://esm.sh/funlit",
+          "lit-html": "https://esm.sh/lit-html",
+          "lit-html/": "https://esm.sh/lit-html/",
+          "@lit/reactive-element/": "https://esm.sh/@lit/reactive-element/"
         }
       }
     </script>
@@ -25,8 +25,6 @@
     <script type="module">
       import { define, html } from 'funlit';
       import { createRef, ref } from 'lit-html/directives/ref.js';
-
-      const importMap = document.getElementById('importMap').textContent;
 
       function debounce(fn, ms = 300) {
         let id = -1;
@@ -37,6 +35,32 @@
         };
       }
 
+      function createHighlights(name) {
+        if (!CSS.highlights) return;
+
+        const highlight = new Highlight();
+        const rangeCache = new WeakMap();
+
+        CSS.highlights.set(name, highlight);
+
+        return {
+          set(node, ranges) {
+            for (const range of rangeCache.get(node) ?? []) {
+              highlight.delete(range);
+            }
+
+            for (const range of ranges) {
+              highlight.add(range);
+            }
+
+            rangeCache.set(node, ranges);
+          },
+        };
+      }
+
+      const importMap = document.getElementById('importMap').textContent;
+      const noise = createHighlights('noise');
+
       define('fun-example', (host) => {
         let internals = host.attachInternals();
         let editor = createRef();
@@ -44,13 +68,31 @@
 
         internals.role = 'article';
 
+        function highlightEditor() {
+          if (!editor.value) return;
+          if (!noise) return;
+
+          const textNode = editor.value.firstChild;
+          const matches = textNode.textContent.matchAll(/[^a-z0-9 ]+/gi) ?? [];
+          const ranges = Array.from(matches).map((match) => {
+            const { index } = match;
+            const { length } = match[0];
+            const range = new Range();
+
+            range.setStart(textNode, index);
+            range.setEnd(textNode, index + length);
+
+            return range;
+          });
+
+          noise.set(textNode, ranges);
+        }
+
         function updateEditor(content) {
           if (!editor.value) return;
 
-          // prettier-ignore
-          editor.value.innerHTML = content.replace(/[^a-z0-9\s]+/gi, (x) =>
-            `<i>${x.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')}</i>`,
-          );
+          editor.value.textContent = content;
+          highlightEditor();
         }
 
         function updatePreview(content) {
@@ -76,31 +118,9 @@
 
         const debouncedUpdatePreview = debounce(updatePreview);
 
-        function handlePreInput(event) {
-          if (!(event.target instanceof HTMLPreElement)) return;
-
-          const selection = document.getSelection();
-
-          selection.extend(editor.value);
-
-          let offset = selection.toString().length;
-          let content = editor.value.textContent;
-
-          updateEditor(content);
-          debouncedUpdatePreview(content);
-
-          let node = editor.value.firstChild;
-
-          while (node && node.textContent.length < offset) {
-            offset -= node.textContent.length;
-            node = node.nextSibling;
-          }
-
-          while (node && node.nodeType !== Node.TEXT_NODE) {
-            node = node.firstChild;
-          }
-
-          selection.collapse(node, offset);
+        function handleInput(event) {
+          highlightEditor();
+          debouncedUpdatePreview(event.target.textContent);
         }
 
         host.addEventListener('connect', async () => {
@@ -122,7 +142,7 @@
             aria-label="editor"
             contenteditable="plaintext-only"
             spellcheck="false"
-            @input=${handlePreInput}
+            @input=${handleInput}
             ${ref(editor)}
           ></pre>
           <iframe
@@ -202,11 +222,9 @@
           min-block-size: 22rem;
           overflow: auto;
           resize: vertical;
-          tab-size: 2;
-          white-space: pre;
         }
 
-        & > pre i {
+        & > pre::highlight(noise) {
           color: var(--color-foregroundAccent);
         }
 
@@ -241,6 +259,7 @@
         <fun-example src="./examples/fun-stepper.html"></fun-example>
         <fun-example src="./examples/fun-timer.html"></fun-example>
         <fun-example src="./examples/fun-shadow.html"></fun-example>
+        <fun-example src="./examples/fun-todo.html"></fun-example>
       </main>
 
       <footer class="app-foot">
